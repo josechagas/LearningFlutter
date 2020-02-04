@@ -1,24 +1,31 @@
 
 
+import 'package:flutter/cupertino.dart';
 import 'package:lista_contatos/helpers/contact_helper.dart';
 import 'package:lista_contatos/ui/my_home_page.dart';
 
 class MyHomePageBloc {
 
   ContactHelper helper = ContactHelper();
-  Future<List<Contact>> contactsFuture;
-  List<Contact> contacts;
+  //Future<List<Contact>> contactsFuture;
+
+  ValueNotifier<Future<List<Contact>>> contactsFuture = ValueNotifier(null);
+
+  ValueNotifier<List<Contact>> contacts = ValueNotifier(null);
 
   Contact getContactAt(int index) {
-    if(contacts != null && contacts.isNotEmpty && contacts.length > index)
-      return contacts[index];
+    if(contacts != null)
+      if(contacts.value != null &&
+          contacts.value.isNotEmpty &&
+          contacts.value.length > index)
+        return contacts.value[index];
     return null;
   }
 
   loadContacts(){
-    contactsFuture = helper.getAllContacts();
-    contactsFuture.then((contacts){
-      this.contacts = contacts;
+    contactsFuture.value = helper.getAllContacts();
+    contactsFuture.value.then((contacts){
+      this.contacts.value = contacts;
     });
   }
 
@@ -47,14 +54,16 @@ class MyHomePageBloc {
   void orderContactsBy(OrderOptions orderBy) {
     switch(orderBy) {
       case OrderOptions.aToz:
-        contacts.sort((a,b){
+        contacts.value.sort((a,b){
           return a.name.toLowerCase().compareTo(b.name.toLowerCase());
         });
+        contacts.notifyListeners();
         break;
       case OrderOptions.zToa:
-        contacts.sort((a,b){
+        contacts.value.sort((a,b){
           return b.name.toLowerCase().compareTo(a.name.toLowerCase());
         });
+        contacts.notifyListeners();
         break;
       default:
         break;

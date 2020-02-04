@@ -36,10 +36,18 @@ class _MyHomePageState extends State<MyHomePage> {
           _buildOrderByWidget(),
         ],
       ),
-      body: FutureBuilder(
-        future: bloc.contactsFuture,
-        initialData: bloc.contacts,
-        builder: _buildFutureBody,
+      body: ValueListenableBuilder<Future<List<Contact>>>(
+        valueListenable: bloc.contactsFuture,
+        builder: (
+            BuildContext context,
+            Future<List<Contact>> contactsFuture,
+            Widget child){
+          return FutureBuilder(
+            future: contactsFuture,
+            initialData: bloc.contacts.value,
+            builder: _buildFutureBody,
+          );
+        },
       ),
       floatingActionButton: _buildAddContactButton(),
     );
@@ -72,10 +80,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildContactsListView() {
-    return ListView.builder(
-      padding: EdgeInsets.all(10),
-      itemCount: bloc.contacts?.length ?? 0,
-      itemBuilder: _buildListViewItem,
+    return ValueListenableBuilder(
+      valueListenable: bloc.contacts,
+      builder: (context,List<Contact> contacts,child){
+        return ListView.builder(
+          padding: EdgeInsets.all(10),
+          itemCount: contacts?.length ?? 0,
+          itemBuilder: _buildListViewItem,
+        );
+      },
     );
   }
 
@@ -158,9 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _onPopupMenuItemSelected(OrderOptions choosed) {
-    setState(() {
-      bloc.orderContactsBy(choosed);
-    });
+    bloc.orderContactsBy(choosed);
   }
 
   void _onContactTap({@required int index}) {
@@ -291,6 +302,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void reloadContacts() {
-    setState(() => bloc.loadContacts());
+    bloc.loadContacts();
   }
 }
