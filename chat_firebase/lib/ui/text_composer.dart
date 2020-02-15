@@ -5,10 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class TextComposer extends StatefulWidget {
-
   TextComposer({Key key, @required this.sendMessage}):super(key: key);
-
-  final Function(String) sendMessage;
+  final Function({String mess, File file}) sendMessage;
 
   @override
   _TextComposerState createState() => _TextComposerState();
@@ -17,8 +15,15 @@ class TextComposer extends StatefulWidget {
 class _TextComposerState extends State<TextComposer> {
 
   ValueNotifier<bool> isComposing = ValueNotifier(false);
-
   TextEditingController _controller = TextEditingController();
+  FocusNode textFieldNode = FocusNode();
+
+  @override
+  void dispose() {
+    textFieldNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +39,7 @@ class _TextComposerState extends State<TextComposer> {
           ),
           Expanded(
             child: TextField(
+              focusNode: textFieldNode,
               controller: _controller,
               decoration: InputDecoration.collapsed(
                   hintText: 'Enviar uma Mensagem',
@@ -76,50 +82,59 @@ class _TextComposerState extends State<TextComposer> {
   }
 
   void _onSendButtonPressed() {
-    widget.sendMessage(_controller.text);
+    widget.sendMessage(
+      mess: _controller.text,
+    );
     _reset();
   }
 
   void _onCameraButtonPressed() {
     TextStyle style = Theme.of(context).textTheme.title;
-
-    Scaffold.of(context).showBottomSheet((BuildContext context){
+    textFieldNode.unfocus();
+    showModalBottomSheet(context: context, builder: (BuildContext context){
       return BottomSheet(
         onClosing: (){},
         builder: (BuildContext context){
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              MaterialButton(
-                child: Text(
-                  "Camera",
-                  style: style,
+          return Container(
+            padding: EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Escolha uma opção',
                 ),
-                onPressed: (){
-                  _choosePictureFrom(ImageSource.camera);
-                  Navigator.of(context).pop();
-                },
-              ),
-              Divider(),
-              MaterialButton(
-                child: Text(
-                  "Galeria",
-                  style: style,
+                SizedBox(height: 20.0,),
+                MaterialButton(
+                  child: Text(
+                    "Camera",
+                    style: style,
+                  ),
+                  onPressed: (){
+                    _choosePictureFrom(ImageSource.camera);
+                    Navigator.of(context).pop();
+                  },
                 ),
-                onPressed: () {
-                  _choosePictureFrom(ImageSource.gallery);
-                  Navigator.of(context).pop();
-                },
-              ),
-              Divider(),
-              MaterialButton(
-                child: Text(
-                  "Cancelar",
-                  style: style,
+                Divider(),
+                MaterialButton(
+                  child: Text(
+                    "Galeria",
+                    style: style,
+                  ),
+                  onPressed: () {
+                    _choosePictureFrom(ImageSource.gallery);
+                    Navigator.of(context).pop();
+                  },
                 ),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
+                Divider(),
+                MaterialButton(
+                  child: Text(
+                    "Cancelar",
+                    style: style,
+                  ),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
           );
         },
       );
@@ -128,11 +143,15 @@ class _TextComposerState extends State<TextComposer> {
 
 
   void _choosePictureFrom(ImageSource source) async {
-    File imageFile = await ImagePicker.pickImage(
+    final File imageFile = await ImagePicker.pickImage(
       source: source,
       maxHeight: 800,
       maxWidth: 800,
     );
 
+    if(imageFile == null) return;
+    widget.sendMessage(
+      file: imageFile,
+    );
   }
 }
