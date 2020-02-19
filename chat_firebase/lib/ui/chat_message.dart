@@ -8,28 +8,25 @@ class ChatMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imgUrl = data['imgUrl'] as String;
-    final hasImg = imgUrl != null && imgUrl.isNotEmpty;
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment:
+            isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
-          !isMine ? _buildAvatarWidget() : Container(),
-          Expanded(
+          Visibility(
+            child: _buildAvatarWidget(),
+            visible: !isMine,
+          ),
+          Flexible(
             child: Column(
               crossAxisAlignment:
-                  isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              isMine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
               children: <Widget>[
-                hasImg
-                    ? Image.network(
-                        imgUrl,
-                        width: 200,
-                      )
-                    : Text(
-                        data['text'] ?? '',
-                        style: Theme.of(context).textTheme.subhead,
-                        textAlign: isMine ? TextAlign.end : TextAlign.start,
-                      ),
+                _buildBallonWidget(context),
                 SizedBox(
                   height: 5,
                 ),
@@ -41,7 +38,10 @@ class ChatMessage extends StatelessWidget {
               ],
             ),
           ),
-          isMine ? _buildAvatarWidget() : Container(),
+          Visibility(
+            child: _buildAvatarWidget(),
+            visible: isMine,
+          ),
         ],
       ),
     );
@@ -61,6 +61,40 @@ class ChatMessage extends StatelessWidget {
 
     return Row(
       children: isMine ? widgets : widgets.reversed.toList(),
+    );
+  }
+
+  Widget _buildBallonWidget(BuildContext context) {
+    final imgUrl = data['imgUrl'] as String;
+    final hasImg = imgUrl != null && imgUrl.isNotEmpty;
+
+    final padding = hasImg
+        ? EdgeInsets.symmetric(vertical: 5, horizontal: 5)
+        : EdgeInsets.symmetric(vertical: 10, horizontal: 20);
+
+    final content = hasImg
+        ? ClipRRect(
+            child: Image.network(
+              imgUrl,
+              width: 200,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          )
+        : Text(
+            data['text'] ?? '',
+            style: Theme.of(context).textTheme.subhead.copyWith(
+                  color: Colors.white,
+                ),
+            textAlign: isMine ? TextAlign.end : TextAlign.start,
+          );
+
+    return Material(
+        color: isMine ? Colors.blue : Colors.green,
+      child: Padding(
+        padding: padding,
+        child: content,
+      ),
+      borderRadius: BorderRadiusDirectional.circular(hasImg ? 10 : 25),
     );
   }
 }

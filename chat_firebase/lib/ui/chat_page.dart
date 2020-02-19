@@ -18,12 +18,17 @@ class _ChatPageState extends State<ChatPage> {
 
   final GoogleSignIn googleSignIn = GoogleSignIn();
   FirebaseUser _currentUser;
+  bool _isLoading = false;
+
+  bool get isUserLogged => _currentUser != null;
 
   @override
   void initState() {
     super.initState();
-    FirebaseAuth.instance.onAuthStateChanged.listen((user){
-      _currentUser = user;
+    FirebaseAuth.instance.onAuthStateChanged.listen((user) {
+      setState(() {
+        _currentUser = user;
+      });
     });
   }
 
@@ -33,14 +38,26 @@ class _ChatPageState extends State<ChatPage> {
       key: _scafKey,
       appBar: AppBar(
         title: Text(
-          'Olá',
+          isUserLogged ? 'Olá ${_currentUser.displayName}' : 'Chat App',
         ),
         elevation: 0,
+        actions: <Widget>[
+          isUserLogged
+              ? IconButton(
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: () => signoutUser(),
+                )
+              : Container(),
+        ],
       ),
       body: Column(
         children: <Widget>[
           Expanded(
             child: _buildMessagesWidget(),
+          ),
+          Visibility(
+            visible: _isLoading,
+            child:  LinearProgressIndicator(),
           ),
           TextComposer(
             sendMessage: _onSendMessageAction,
@@ -52,7 +69,10 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildMessagesWidget() {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('messages').snapshots(),
+      stream: Firestore.instance
+          .collection('messages')
+          .orderBy('createdAt', descending: true)
+          .snapshots(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -61,61 +81,74 @@ class _ChatPageState extends State<ChatPage> {
               child: CircularProgressIndicator(),
             );
           default:
-            List<DocumentSnapshot> docs =
-                snapshot.data?.documents?.reversed?.toList() ?? [];
+            List<DocumentSnapshot> docs = snapshot.data?.documents ?? [];
             return ListView.builder(
                 itemCount: docs.length,
                 reverse: true,
                 itemBuilder: (context, index) {
                   final doc = docs[index];
-                  return ChatMessage(doc.data, true);
+
+                  print(_currentUser?.uid);
+                  return ChatMessage(
+                      doc.data,
+                      doc.data['uId'] == _currentUser?.uid,
+                  );
                 });
         }
       },
     );
   }
 
-  void _showLoginErrorSnackbar(){
-    _scafKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text(
-              'Não foi possível fazer o login, tente novamente.'
-          ),
-        )
-    );
+  void _showLoginErrorSnackbar() {
+    _scafKey.currentState.showSnackBar(SnackBar(
+      content: Text('Não foi possível fazer o login, tente novamente.'),
+    ));
+  }
+
+  void _showSignedOutSnackbar() {
+    _scafKey.currentState.showSnackBar(SnackBar(
+      content: Text('Você saiu com sucesso!'),
+    ));
   }
 
   void _onSendMessageAction({String mess, File file}) async {
     final FirebaseUser user = await _getUser();
 
-    if(user == null) {
+    if (user == null) {
       _showLoginErrorSnackbar();
-    }
-    else {
-      await _sendMessage(user,mess: mess, file: file);
+    } else {
+      _sendMessage(user, mess: mess, file: file);
     }
   }
 
-  void _sendMessage(FirebaseUser user, {String mess, File file}) async {
+  Future<void> _sendMessage(FirebaseUser user, {String mess, File file}) async {
     Map<String, dynamic> map = {
       'uId': user.uid,
       'senderName': user.displayName,
       'senderPhotoUrl': user.photoUrl,
+      'createdAt': DateTime.now(),
     };
-
-    if (file != null) {
+    final hasFile = file != null;
+    final hasMess = mess != null && mess.isNotEmpty;
+    if (hasFile) {
       StorageUploadTask task = FirebaseStorage.instance
           .ref()
-          .child(DateTime.now().millisecondsSinceEpoch.toString())
+          //.child(user.uid)
+          .child(user.uid+DateTime.now().millisecondsSinceEpoch.toString())
           .putFile(file);
+
+      setState(() => _isLoading = true);
 
       StorageTaskSnapshot snapshot = await task.onComplete;
       String url = await snapshot.ref.getDownloadURL();
       map['imgUrl'] = url;
-      print(url);
+
+      setState(() => _isLoading = false);
     }
-    if (mess != null && mess.isNotEmpty) map['text'] = mess;
-    Firestore.instance.collection('messages').add(map);
+    if (hasMess) map['text'] = mess;
+
+    if(hasFile || hasMess)
+      Firestore.instance.collection('messages').add(map);
   }
 
   /**
@@ -123,10 +156,9 @@ class _ChatPageState extends State<ChatPage> {
    *
    * */
   Future<FirebaseUser> _getUser() async {
-    if(_currentUser != null) {
+    if (isUserLogged) {
       return _currentUser;
-    }
-    else {
+    } else {
       try {
         final GoogleSignInAccount account = await googleSignIn.signIn();
         final GoogleSignInAuthentication auth = await account.authentication;
@@ -134,7 +166,8 @@ class _ChatPageState extends State<ChatPage> {
         final AuthCredential credential = GoogleAuthProvider.getCredential(
             idToken: auth.idToken, accessToken: auth.accessToken);
 
-        final AuthResult authResult = await FirebaseAuth.instance.signInWithCredential(credential);
+        final AuthResult authResult =
+            await FirebaseAuth.instance.signInWithCredential(credential);
 
         final FirebaseUser user = authResult.user;
         return user;
@@ -143,5 +176,11 @@ class _ChatPageState extends State<ChatPage> {
       }
       return null;
     }
+  }
+
+  Future<void> signoutUser() async {
+    await FirebaseAuth.instance.signOut();
+    await googleSignIn.signOut();
+    _showSignedOutSnackbar();
   }
 }
