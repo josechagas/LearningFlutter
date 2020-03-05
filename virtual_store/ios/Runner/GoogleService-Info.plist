@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>932446519543-pq7pgmja4r3som9ia60fpaee47k8af7q.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.932446519543-pq7pgmja4r3som9ia60fpaee47k8af7q</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBPhK3CkCUul2E6bi3Ay9lmWOBouvqMwSE</string>
+	<key>GCM_SENDER_ID</key>
+	<string>932446519543</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.joselucas.virtualStore</string>
+	<key>PROJECT_ID</key>
+	<string>loja-virtual-flutter-879f7</string>
+	<key>STORAGE_BUCKET</key>
+	<string>loja-virtual-flutter-879f7.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:932446519543:ios:41a0e9e5a120265628d3f2</string>
+	<key>DATABASE_URL</key>
+	<string>https://loja-virtual-flutter-879f7.firebaseio.com</string>
+</dict>
+</plist>
