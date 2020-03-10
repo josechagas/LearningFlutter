@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:virtual_store/ui/load_info_widget.dart';
 
 class HomeTab extends StatelessWidget {
   @override
@@ -38,28 +39,10 @@ class HomeTab extends StatelessWidget {
     }
 
     if (snapshot.hasData && !snapshot.hasError) {
-      print(snapshot.data.documents.length);
       return _buildStaggeredGrid(snapshot.data.documents);
     } else {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              snapshot.hasError ? 'Ocorreu um erro!!!' : 'Nada por aqui!!',
-              style: Theme.of(context).textTheme.title,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            MaterialButton(
-              child: Text(
-                'Recarregar',
-              ),
-              onPressed: () {},
-            )
-          ],
-        ),
+      return LoadInfoWidget(
+        hasError: snapshot.hasError,
       );
     }
   }

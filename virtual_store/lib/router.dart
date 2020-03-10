@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_store/ui/home_tab.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
+import 'package:virtual_store/ui/products_tab.dart';
 
 abstract class Router {
   Route<dynamic> generateRoute(RouteSettings settings);
@@ -10,12 +11,18 @@ abstract class Router {
 class DrawerRouter implements Router {
   static const String homePage = '/';
   static const String homePage2 = '/homePage2';
+  static const String products = '/products';
   @override
   Route generateRoute(RouteSettings settings) {
     switch (settings.name){
       case homePage: {
         return MaterialPageRoute(
           builder: (context) => HomeTab(),
+        );
+      }
+      case products: {
+        return MaterialPageRoute(
+          builder: (context) => ProductsTab(),
         );
       }
       case homePage2: {
