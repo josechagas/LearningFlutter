@@ -1,16 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:virtual_store/ui/load_info_widget.dart';
 
-class ProductsTab extends StatelessWidget {
+class ProductsTab extends StatefulWidget {
+  @override
+  _ProductsTabState createState() => _ProductsTabState();
+}
+
+class _ProductsTabState extends State<ProductsTab> {
+  Future<QuerySnapshot> _firebaseFuture;
+
+  @override
+  void initState() {
+    _initFuture();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<QuerySnapshot>(
-        future: Firestore.instance
-            .collection('home')
-            .orderBy('pos')
-            .getDocuments(), //****
+        future: _firebaseFuture, //****
         builder: _buildBodyFuture,
       ),
     );
@@ -27,13 +38,67 @@ class ProductsTab extends StatelessWidget {
       default:
         break;
     }
-
     if (snapshot.hasData && !snapshot.hasError) {
-      return Container();
+      return _buildCategoriesListView(snapshot.data.documents);
     } else {
       return LoadInfoWidget(
         hasError: snapshot.hasError,
+        onReloadPressed: _onReloadDataPressed(),
       );
     }
+  }
+
+  Widget _buildCategoriesListView(List<DocumentSnapshot> documents) {
+    return ListView.separated(
+        itemBuilder: (BuildContext context, int index) {
+          final doc = documents[index];
+          return _buildCategoryListTile(doc);
+        },
+        separatorBuilder: (_, __) {
+          return Divider();
+        },
+        itemCount: documents.length);
+  }
+
+  Widget _buildCategoryListTile(DocumentSnapshot doc) {
+    final data = doc.data;
+    final icon = data['icon'];
+    return ListTile(
+      leading: icon != null
+          ? FadeInImage.memoryNetwork(
+              placeholder: kTransparentImage,
+              image: icon,
+              fit: BoxFit.cover,
+        height: 40,
+        width: 40,
+            )
+          : Icon(
+              Icons.image,
+            ),
+      title: Text(
+        data['title'] ?? 'no title',
+      ),
+      trailing: Icon(
+        Icons.chevron_right,
+      ),
+      onTap: (){
+
+      },
+    );
+  }
+
+  _initFuture() {
+    _firebaseFuture =
+        Firestore.instance.collection('products').getDocuments();
+  }
+
+  _onReloadDataPressed() {
+    setState(() {
+      _initFuture();
+    });
+  }
+
+  _onCategoryListTileTap(){
+
   }
 }

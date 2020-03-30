@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class LoadInfoWidget extends StatelessWidget {
 
-  LoadInfoWidget({Key key, @required this.hasError}):super(key: key);
+  LoadInfoWidget({Key key, @required this.hasError,@required this.onReloadPressed}):super(key: key);
 
+  final Function onReloadPressed;
   final bool hasError;
 
   @override
@@ -23,7 +24,7 @@ class LoadInfoWidget extends StatelessWidget {
             child: Text(
               'Recarregar',
             ),
-            onPressed: () {},
+            onPressed: onReloadPressed,
           )
         ],
       ),

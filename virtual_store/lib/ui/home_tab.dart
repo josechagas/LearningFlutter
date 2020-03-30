@@ -4,25 +4,36 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:virtual_store/ui/load_info_widget.dart';
 
-class HomeTab extends StatelessWidget {
+
+class HomeTab extends StatefulWidget {
+  @override
+  _HomeTabState createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
+  Future<QuerySnapshot> _firebaseFuture;
+
+  @override
+  void initState() {
+    _initFuture();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     //*** É importante verificar se é possivel continuar em realtime e color o future
     //em uma variavel para evitar o reload sempre que o metodo 'build' é chamado.
 
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          _buildBodyBack(context),
-          FutureBuilder<QuerySnapshot>(
-            future: Firestore.instance
-                .collection('home')
-                .orderBy('pos')
-                .getDocuments(), //****
-            builder: _buildBodyFuture,
-          ),
-        ],
-      )
+        body: Stack(
+          children: <Widget>[
+            _buildBodyBack(context),
+            FutureBuilder<QuerySnapshot>(
+              future: _firebaseFuture, //****
+              builder: _buildBodyFuture,
+            ),
+          ],
+        )
     );
   }
 
@@ -43,6 +54,7 @@ class HomeTab extends StatelessWidget {
     } else {
       return LoadInfoWidget(
         hasError: snapshot.hasError,
+        onReloadPressed: _onReloadDataPressed,
       );
     }
   }
@@ -56,9 +68,15 @@ class HomeTab extends StatelessWidget {
           return StaggeredTile.count(doc.data['x'], doc.data['y']);
         }).toList(),
         children: documents.map((DocumentSnapshot doc) {
+          final imageUrl = doc.data['image'];
+          if(imageUrl == null) {
+            return Icon(
+              Icons.image,
+            );
+          }
           return FadeInImage.memoryNetwork(
             placeholder: kTransparentImage,
-            image: doc.data['image'],
+            image: imageUrl,
             fit: BoxFit.cover,
           );
         }).toList());
@@ -68,12 +86,26 @@ class HomeTab extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(colors: [
-        Color.fromARGB(255, 211, 118, 130),
-        Color.fromARGB(255, 253, 181, 168)
-      ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+            Color.fromARGB(255, 211, 118, 130),
+            Color.fromARGB(255, 253, 181, 168)
+          ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
     );
   }
+
+  _initFuture(){
+    _firebaseFuture = Firestore.instance
+        .collection('home')
+        .orderBy('pos')
+        .getDocuments();
+  }
+
+  _onReloadDataPressed(){
+    setState(() {
+      _initFuture();
+    });
+  }
 }
+
 
 class HomeScreen2 extends StatelessWidget {
   @override
