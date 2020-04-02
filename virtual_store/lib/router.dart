@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:virtual_store/ui/category_detail_page.dart';
 import 'package:virtual_store/ui/home_tab.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
 import 'package:virtual_store/ui/products_tab.dart';
@@ -38,12 +39,19 @@ class DrawerRouter implements Router {
 
 class RootRouter implements Router {
   static const String myHomePage = '/myHomePage';
+  static const String categoryDetail = '/categoryDetail';
+
   @override
   Route generateRoute(RouteSettings settings) {
     switch (settings.name){
       case myHomePage: {
         return MaterialPageRoute(
           builder: (context) => MyHomePage(),
+        );
+      }
+      case categoryDetail: {
+        return MaterialPageRoute(
+          builder: (context) => CategoryDetailPage(categorySnapshot: settings.arguments,),
         );
       }
       default:

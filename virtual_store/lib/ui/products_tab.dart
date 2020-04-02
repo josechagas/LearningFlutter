@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:virtual_store/router.dart';
 import 'package:virtual_store/ui/load_info_widget.dart';
 
 class ProductsTab extends StatefulWidget {
@@ -69,8 +70,8 @@ class _ProductsTabState extends State<ProductsTab> {
               placeholder: kTransparentImage,
               image: icon,
               fit: BoxFit.cover,
-        height: 40,
-        width: 40,
+              height: 40,
+              width: 40,
             )
           : Icon(
               Icons.image,
@@ -81,15 +82,12 @@ class _ProductsTabState extends State<ProductsTab> {
       trailing: Icon(
         Icons.chevron_right,
       ),
-      onTap: (){
-
-      },
+      onTap: () => _onCategoryListTileTap(doc),
     );
   }
 
   _initFuture() {
-    _firebaseFuture =
-        Firestore.instance.collection('products').getDocuments();
+    _firebaseFuture = Firestore.instance.collection('products').getDocuments();
   }
 
   _onReloadDataPressed() {
@@ -98,7 +96,10 @@ class _ProductsTabState extends State<ProductsTab> {
     });
   }
 
-  _onCategoryListTileTap(){
-
+  _onCategoryListTileTap(DocumentSnapshot doc) {
+    Navigator.of(context, rootNavigator: true).pushNamed(
+      RootRouter.categoryDetail,
+      arguments: doc,
+    );
   }
 }
