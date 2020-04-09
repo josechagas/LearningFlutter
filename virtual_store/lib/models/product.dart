@@ -5,8 +5,8 @@ class Product {
   String title;
   String description;
   int priceCents;
-  List<String> images;
-  List<String> sizes;
+  List<dynamic> images;
+  List<dynamic> sizes;
   String category;
 
   double get price => priceCents/100.0;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:virtual_store/ui/category_detail_page.dart';
 import 'package:virtual_store/ui/home_tab.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
+import 'package:virtual_store/ui/product_page.dart';
 import 'package:virtual_store/ui/products_tab.dart';
 
 abstract class Router {
@@ -40,6 +41,7 @@ class DrawerRouter implements Router {
 class RootRouter implements Router {
   static const String myHomePage = '/myHomePage';
   static const String categoryDetail = '/categoryDetail';
+  static const String productDetail = '/productDetail';
 
   @override
   Route generateRoute(RouteSettings settings) {
@@ -52,6 +54,11 @@ class RootRouter implements Router {
       case categoryDetail: {
         return MaterialPageRoute(
           builder: (context) => CategoryDetailPage(categorySnapshot: settings.arguments,),
+        );
+      }
+      case productDetail: {
+        return MaterialPageRoute(
+          builder: (context) => ProductPage(product: settings.arguments,),
         );
       }
       default:

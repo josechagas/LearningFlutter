@@ -1,9 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/intl_standalone.dart';
 import 'package:virtual_store/router.dart';
 import 'package:virtual_store/ui/home_tab.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  //Intl.defaultLocale = Platform.localeName;
+  //await findSystemLocale();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
