@@ -113,22 +113,25 @@ class CustomDrawer extends StatelessWidget {
             'Olá',
             style: Theme.of(context).textTheme.subhead,
           ),
-          subtitle: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                'Entre ou Cadastre-se',
-                style: Theme.of(context).textTheme.subhead.copyWith(
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.bold),
-              ),
-              Icon(
-                Icons.arrow_forward,
-                color: Theme.of(context).primaryColor,
-                size: 20,
-              ),
-            ],
+          subtitle: GestureDetector(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Entre ou Cadastre-se',
+                  style: Theme.of(context).textTheme.subhead.copyWith(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold),
+                ),
+                Icon(
+                  Icons.arrow_forward,
+                  color: Theme.of(context).primaryColor,
+                  size: 20,
+                ),
+              ],
+            ),
+            onTap: ()=>_goToSignInPage(context),
           ),
         )
       ],
@@ -136,4 +139,10 @@ class CustomDrawer extends StatelessWidget {
 
     return col;
   }
+
+
+  void _goToSignInPage(BuildContext context){
+    Navigator.of(context,rootNavigator: true).pushNamed(RootRouter.signIn);
+  }
+
 }

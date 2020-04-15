@@ -15,6 +15,8 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   Product get product => widget.product;
 
+  String _selectedSize;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,24 +64,116 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  Widget _buildItemInfoWidget(){
-    final priceText = NumberFormat.simpleCurrency(locale: "pt_BR").format(product.price);
+  Widget _buildItemInfoWidget() {
+    final baseSpace = SizedBox(
+      height: 16,
+    );
+    final priceText =
+        NumberFormat.simpleCurrency(locale: "pt_BR").format(product.price);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
           product.title,
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.headline,
           maxLines: 3,
         ),
         Text(
-            priceText,
+          priceText,
           style: Theme.of(context).textTheme.title.copyWith(
+                color: Theme.of(context).primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+        baseSpace,
+        Text(
+          'Descrição',
+          style: Theme.of(context).textTheme.title,
+        ),
+        Text(
+          product.description,
+        ),
+        baseSpace,
+        Text(
+          'Tamanho',
+          style: Theme.of(context).textTheme.title,
+        ),
+        _buildSizesWidget(),
+        baseSpace,
+        SizedBox(
+          height: 50,
+          child: RaisedButton(
+            child: Text(
+              'Adicionar ao Carrinho',
+            ),
             color: Theme.of(context).primaryColor,
-            fontWeight: FontWeight.bold,
+            textColor: Colors.white,
+            onPressed: _selectedSize?.isEmpty ?? true ? null : _onAddToCartButtonPressed,
           ),
         ),
       ],
     );
+  }
+
+  Widget _buildSizesWidget() {
+    Color colorFor(String size) =>
+        _selectedSize == size ? Theme.of(context).primaryColor : Colors.grey;
+    return Wrap(
+      alignment: WrapAlignment.start,
+      direction: Axis.horizontal,
+      spacing: 10,
+      //runSpacing: 5,
+      children: product.sizes.map((item) {
+        final itemSize = item as String;
+        final color = colorFor(itemSize);
+        /*return InkWell(
+          onTap: () => _didSelectItemSize(itemSize),
+          child: Container(
+            width: 70,
+            height: 34,
+            alignment: Alignment.center,
+            child: Text(
+              itemSize as String,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: color
+              ),
+            ),
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 2,
+                color: color,
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+          ),
+        );*/
+
+        return MaterialButton(
+          child: Text(
+            itemSize,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          textColor: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+            side: BorderSide(color: color, width: 2),
+          ),
+          onPressed: () => _didSelectItemSize(itemSize),
+        );
+      }).toList(),
+    );
+  }
+
+  void _onAddToCartButtonPressed(){
+
+  }
+
+  void _didSelectItemSize(String size) {
+    setState(() {
+      _selectedSize = _selectedSize == size ? null : size;
+    });
   }
 }

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:virtual_store/router.dart';
 import 'package:virtual_store/ui/home_tab.dart';
+import 'package:virtual_store/ui/login_page.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
 
 void main() {
@@ -18,11 +19,12 @@ class MyApp extends StatelessWidget {
   final rootRouter = RootRouter();
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Color.fromARGB(255, 4, 125, 141);
     return MaterialApp(
       title: "Flutter's Clothing",
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        primaryColor: Color.fromARGB(255, 4, 125, 141),
+        primaryColor: primaryColor,
       ),
       home: MyHomePage(),
       onGenerateRoute: rootRouter.generateRoute,

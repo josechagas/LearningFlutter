@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_store/ui/category_detail_page.dart';
 import 'package:virtual_store/ui/home_tab.dart';
+import 'package:virtual_store/ui/login_page.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
 import 'package:virtual_store/ui/product_page.dart';
 import 'package:virtual_store/ui/products_tab.dart';
+import 'package:virtual_store/ui/signup_page.dart';
 
 abstract class Router {
   Route<dynamic> generateRoute(RouteSettings settings);
@@ -42,6 +44,8 @@ class RootRouter implements Router {
   static const String myHomePage = '/myHomePage';
   static const String categoryDetail = '/categoryDetail';
   static const String productDetail = '/productDetail';
+  static const String signUp = '/signUp';
+  static const String signIn = '/signIn';
 
   @override
   Route generateRoute(RouteSettings settings) {
@@ -59,6 +63,16 @@ class RootRouter implements Router {
       case productDetail: {
         return MaterialPageRoute(
           builder: (context) => ProductPage(product: settings.arguments,),
+        );
+      }
+      case signUp: {
+        return MaterialPageRoute(
+          builder: (context) => SignUpPage(),
+        );
+      }
+      case signIn: {
+        return MaterialPageRoute(
+          builder: (context) => LoginPage(),
         );
       }
       default:
