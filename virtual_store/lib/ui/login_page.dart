@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:virtual_store/blocs/login_bloc.dart';
 import 'package:virtual_store/router.dart';
 
 class LoginPage extends StatefulWidget {
@@ -17,6 +19,8 @@ class _LoginPageState extends State<LoginPage> {
   FocusNode _emailNode;
   FocusNode _passwordNode;
 
+  final bloc = LoginBloc();
+
   @override
   void initState() {
     _emailNode = FocusNode();
@@ -30,12 +34,12 @@ class _LoginPageState extends State<LoginPage> {
     _passwordNode.dispose();
     _passwordTFController.dispose();
     _emailTFController.dispose();
+    bloc.dispose();
     super.dispose();
   }
   
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -51,23 +55,35 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: LimitedBox(//to block vertically
-          child: Center(//to center credentials inside view
-            heightFactor: 0.8,
-            child: ConstrainedBox(
-              constraints: BoxConstraints.loose(Size.fromWidth(280)),
-              child: _buildCredentialsWidget(context),
-            ),
+      body: ValueListenableBuilder(
+        child: _buildNormalBody(),
+        valueListenable: bloc.isLoading,
+        builder: (context, isLoading, child){
+          return isLoading ? Center(
+            child: CircularProgressIndicator(),
+          ) : child;
+        },
+      )
+    );
+  }
+
+  Widget _buildNormalBody(){
+    return SingleChildScrollView(
+      child: LimitedBox(//to block vertically
+        child: Center(//to center credentials inside view
+          heightFactor: 0.8,
+          child: ConstrainedBox(
+            constraints: BoxConstraints.loose(Size.fromWidth(280)),
+            child: _buildCredentialsWidget(),
           ),
-          maxHeight: MediaQuery.of(context).size.height -
-              MediaQuery.of(context).padding.vertical,
         ),
+        maxHeight: MediaQuery.of(context).size.height -
+            MediaQuery.of(context).padding.vertical,
       ),
     );
   }
 
-  Widget _buildCredentialsWidget(BuildContext context) {
+  Widget _buildCredentialsWidget() {
     return Form(
       key: _formKey,
       child: Column(
@@ -150,6 +166,7 @@ class _LoginPageState extends State<LoginPage> {
   void _signInButtonPressed() {
     if(_formKey.currentState.validate()) {
       //perform login
+      bloc.performSignIn();
     }
   }
 

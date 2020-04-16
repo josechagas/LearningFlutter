@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/intl_standalone.dart';
+import 'package:provider/provider.dart';
+import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/router.dart';
 import 'package:virtual_store/ui/home_tab.dart';
 import 'package:virtual_store/ui/login_page.dart';
@@ -11,7 +13,11 @@ import 'package:virtual_store/ui/my_home_page.dart';
 void main() {
   //Intl.defaultLocale = Platform.localeName;
   //await findSystemLocale();
-  runApp(MyApp());
+  //runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (_) => UserBloc(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
