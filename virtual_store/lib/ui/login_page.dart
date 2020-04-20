@@ -1,17 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:virtual_store/blocs/login_bloc.dart';
+import 'package:virtual_store/blocs/login_page_bloc.dart';
 import 'package:virtual_store/router.dart';
 
 class LoginPage extends StatefulWidget {
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final _credentialWidgetWidth = 280.0;
 
   final _passwordTFController = TextEditingController();
   final _emailTFController = TextEditingController();
@@ -19,7 +19,7 @@ class _LoginPageState extends State<LoginPage> {
   FocusNode _emailNode;
   FocusNode _passwordNode;
 
-  final bloc = LoginBloc();
+  final bloc = LoginPageBloc();
 
   @override
   void initState() {
@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
     bloc.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,25 +55,20 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),
-      body: ValueListenableBuilder(
-        child: _buildNormalBody(),
-        valueListenable: bloc.isLoading,
-        builder: (context, isLoading, child){
-          return isLoading ? Center(
-            child: CircularProgressIndicator(),
-          ) : child;
-        },
-      )
+      body: _buildNormalBody(),
     );
   }
 
-  Widget _buildNormalBody(){
+  Widget _buildNormalBody() {
     return SingleChildScrollView(
-      child: LimitedBox(//to block vertically
-        child: Center(//to center credentials inside view
+      child: LimitedBox(
+        //to block vertically
+        child: Center(
+          //to center credentials inside view
           heightFactor: 0.8,
           child: ConstrainedBox(
-            constraints: BoxConstraints.loose(Size.fromWidth(280)),
+            constraints:
+                BoxConstraints.loose(Size.fromWidth(_credentialWidgetWidth)),
             child: _buildCredentialsWidget(),
           ),
         ),
@@ -88,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
       key: _formKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           TextFormField(
             controller: _emailTFController,
@@ -99,8 +94,8 @@ class _LoginPageState extends State<LoginPage> {
             ),
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
-            validator: (email){
-              if(email.isEmpty || !email.contains('@'))
+            validator: (email) {
+              if (email.isEmpty || !email.contains('@'))
                 return 'Email inválido';
               return null;
             },
@@ -117,9 +112,8 @@ class _LoginPageState extends State<LoginPage> {
               //labelText: 'Senha'
             ),
             obscureText: true,
-            validator: (password){
-              if(password.isEmpty)
-                return 'Senha inválida!';
+            validator: (password) {
+              if (password.isEmpty) return 'Senha inválida!';
               return null;
             },
             onFieldSubmitted: (_) => _signInButtonPressed(),
@@ -134,17 +128,50 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: _forgotPasswordButtonPressed,
             ),
           ),
-          _buildSignInButton(context),
+          _buildLoadActionWidget(),
         ],
       ),
     );
   }
 
-  Widget _buildSignInButton(BuildContext context){
+  Widget _buildLoadActionWidget(){
+    final avoidClipShadowInset = EdgeInsets.symmetric(vertical: 5, horizontal: 2);
+    return ValueListenableBuilder(
+      child: Padding(
+        padding: avoidClipShadowInset,
+        child: _buildSignInButton(),
+      ),
+      valueListenable: bloc.isLoading,
+      builder: (context, isLoading, child) {
+        final duration = Duration(milliseconds: 120);
+        return AnimatedCrossFade(//clip the childs, making a button to have its shadow clipped.
+          firstChild: child,
+          secondChild: Container(
+            margin: avoidClipShadowInset,
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor,
+              borderRadius: BorderRadius.circular(25),
+            ),
+            padding: EdgeInsets.all(10),
+            child: isLoading ? CircularProgressIndicator() : null,
+          ),
+          duration: duration,
+          crossFadeState: isLoading
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+        );
+      },
+    );
+  }
+
+  Widget _buildSignInButton() {
     //https://flutter.dev/docs/cookbook/animation/animated-container
     //AnimatedCrossFade(firstChild: null, secondChild: null, crossFadeState: null, duration: null)
     return SizedBox(
       height: 50,
+      width: _credentialWidgetWidth,
       child: RaisedButton(
         textColor: Colors.white,
         color: Theme.of(context).primaryColor,
@@ -164,11 +191,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _signInButtonPressed() {
-    if(_formKey.currentState.validate()) {
+    if (_formKey.currentState.validate()) {
       //perform login
       bloc.performSignIn();
     }
   }
 
-  void _forgotPasswordButtonPressed(){}
+  void _forgotPasswordButtonPressed() {}
 }
