@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/login_page_bloc.dart';
 import 'package:virtual_store/router.dart';
+import 'package:virtual_store/ui/load_action_button.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -135,54 +136,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildLoadActionWidget(){
-    final avoidClipShadowInset = EdgeInsets.symmetric(vertical: 5, horizontal: 2);
     return ValueListenableBuilder(
-      child: Padding(
-        padding: avoidClipShadowInset,
-        child: _buildSignInButton(),
-      ),
       valueListenable: bloc.isLoading,
+      child: Text(
+        'Entrar',
+      ),
       builder: (context, isLoading, child) {
-        final duration = Duration(milliseconds: 120);
-        return AnimatedCrossFade(//clip the childs, making a button to have its shadow clipped.
-          firstChild: child,
-          secondChild: Container(
-            margin: avoidClipShadowInset,
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor,
-              borderRadius: BorderRadius.circular(25),
-            ),
-            padding: EdgeInsets.all(10),
-            child: isLoading ? CircularProgressIndicator() : null,
-          ),
-          duration: duration,
-          crossFadeState: isLoading
-              ? CrossFadeState.showSecond
-              : CrossFadeState.showFirst,
+        return LoadActionButton(
+          isLoading: isLoading,
+          child: child,
+          width: _credentialWidgetWidth,
+          height: 50,
+          onPressed: _signInButtonPressed,
         );
       },
-    );
-  }
-
-  Widget _buildSignInButton() {
-    //https://flutter.dev/docs/cookbook/animation/animated-container
-    //AnimatedCrossFade(firstChild: null, secondChild: null, crossFadeState: null, duration: null)
-    return SizedBox(
-      height: 50,
-      width: _credentialWidgetWidth,
-      child: RaisedButton(
-        textColor: Colors.white,
-        color: Theme.of(context).primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Text(
-          'Entrar',
-        ),
-        onPressed: _signInButtonPressed,
-      ),
     );
   }
 

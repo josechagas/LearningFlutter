@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:virtual_store/blocs/signup_page_bloc.dart';
+import 'package:virtual_store/blocs/user_bloc.dart';
+import 'package:virtual_store/ui/load_action_button.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -15,6 +20,8 @@ class _SignUpPageState extends State<SignUpPage> {
   FocusNode _emailNode;
   FocusNode _passwordNode;
   FocusNode _addressNode;
+
+  final bloc = SignUpPageBloc();
 
   @override
   void initState() {
@@ -33,6 +40,7 @@ class _SignUpPageState extends State<SignUpPage> {
     _nameTFController.dispose();
     _addressNode.dispose();
     _addressTFController.dispose();
+    bloc.dispose();
     super.dispose();
   }
 
@@ -40,15 +48,13 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Criar Conta'
-        ),
+        title: Text('Criar Conta'),
       ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+            padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
             child: _buildForm(),
           ),
         ),
@@ -56,17 +62,15 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildForm(){
+  Widget _buildForm() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         TextFormField(
           controller: _nameTFController,
-          decoration: InputDecoration(
-            hintText: 'Nome',
-            labelText: 'Nome Completo'
-          ),
+          decoration:
+              InputDecoration(hintText: 'Nome', labelText: 'Nome Completo'),
           validator: _validateNotBlank,
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => _addressNode.requestFocus(),
@@ -75,9 +79,7 @@ class _SignUpPageState extends State<SignUpPage> {
           focusNode: _addressNode,
           controller: _addressTFController,
           decoration: InputDecoration(
-              hintText: 'Rua Exemplo 123, Bairro Legal',
-              labelText: 'Endereço'
-          ),
+              hintText: 'Rua Exemplo 123, Bairro Legal', labelText: 'Endereço'),
           validator: _validateNotBlank,
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => _emailNode.requestFocus(),
@@ -85,10 +87,7 @@ class _SignUpPageState extends State<SignUpPage> {
         TextFormField(
           controller: _emailTFController,
           focusNode: _emailNode,
-          decoration: InputDecoration(
-            hintText: 'Email',
-            labelText: 'Email'
-          ),
+          decoration: InputDecoration(hintText: 'Email', labelText: 'Email'),
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           validator: _validateEmail,
@@ -97,10 +96,7 @@ class _SignUpPageState extends State<SignUpPage> {
         TextFormField(
           focusNode: _passwordNode,
           controller: _passwordTFController,
-          decoration: InputDecoration(
-            hintText: 'Senha',
-            labelText: 'Senha'
-          ),
+          decoration: InputDecoration(hintText: 'Senha', labelText: 'Senha'),
           obscureText: true,
           validator: _validatePassword,
           onFieldSubmitted: (_) => _performSignUp(),
@@ -113,49 +109,99 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildSignUpButton(){
+  Widget _buildSignUpButton() {
     //https://flutter.dev/docs/cookbook/animation/animated-container
     //AnimatedCrossFade(firstChild: null, secondChild: null, crossFadeState: null, duration: null)
-    return SizedBox(
-      height: 50,
-      child: RaisedButton(
-        textColor: Colors.white,
-        color: Theme.of(context).primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
+    return ValueListenableBuilder(
+        valueListenable: bloc.isLoading,
         child: Text(
           'Cadastrar',
         ),
-        onPressed: _performSignUp,
-      ),
-    );
+        builder: (context, isLoading, child) {
+          return LoadActionButton(
+            isLoading: isLoading,
+            child: child,
+            onPressed: _performSignUp,
+          );
+        });
   }
-
 
   String _validateNotBlank(String text) {
-    if(text == null || text.isEmpty)
-      return 'Campo inválido!';
+    if (text == null || text.isEmpty) return 'Campo inválido!';
     return null;
   }
 
-  String _validateEmail(String email){
-    if(email.isEmpty || !email.contains('@'))
-      return 'Email inválido';
+  String _validateEmail(String email) {
+    if (email.isEmpty || !email.contains('@')) return 'Email inválido';
     return null;
   }
 
-  String _validatePassword(String password){
-    if(password.isEmpty)
-      return 'Senha inválida!';
+  String _validatePassword(String password) {
+    if (password.isEmpty) return 'Senha inválida!';
+    if (password.length < 6)
+      return 'A senha deve conter no minimo 6 caracteres!';
     return null;
   }
 
-  void _performSignUp(){
+  void _performSignUp() {
     FocusScope.of(context).unfocus();
-    if(_formKey.currentState.validate()) {
+    if (_formKey.currentState.validate()) {
       //When Signing up with success its important to pop login page behind this one
       //when pushing the logged page.
+
+      bloc.performSignUp(
+          name: _nameTFController.value.text,
+          address: _addressTFController.value.text,
+          email: _emailTFController.value.text,
+          password: _passwordTFController.value.text,
+          onSuccess: _onSignUpSuccess,
+          onFailure: _onSignUpFailure);
     }
+  }
+
+  void _onSignUpSuccess() {
+    final bloc = Provider.of<UserBloc>(context,listen: false);
+    bloc.loadUser();
+    Navigator.of(context).pop();
+  }
+
+  void _onSignUpFailure(Object obj) {
+    print(obj);
+    String message = 'Ocorreu um erro durante o cadastro.';
+    PlatformException e = obj as PlatformException;
+    if(e != null) {
+      switch(e.code) {
+        case 'ERROR_WEAK_PASSWORD':
+          message = 'A senha informada é muito fraca.\n\n${e.message}';
+          break;
+        case 'ERROR_INVALID_EMAIL':
+          message = 'O email informado é inválido.\n\n${e.message}';
+          break;
+        case 'ERROR_EMAIL_ALREADY_IN_USE':
+          message = 'O email informado já está em uso.\n\n${e.message}';
+          break;
+        default:
+          break;
+      }
+    }
+
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        title: Text(
+          'Cadastro Falhou',
+        ),
+        content: Text(
+            message,
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text(
+              'OK'
+            ),
+            onPressed: ()=> Navigator.of(context).pop(),
+          ),
+        ],
+      );
+    });
   }
 }

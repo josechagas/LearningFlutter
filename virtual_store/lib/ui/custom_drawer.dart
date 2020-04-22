@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/router.dart';
 
 typedef OnDrawerOptionSelected = Function(DrawerOption);
@@ -108,9 +111,24 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
         ),
-        ListTile(
+        _buildLoggedUserInfoWidget(),
+      ],
+    );
+
+    return col;
+  }
+
+  Widget _buildLoggedUserInfoWidget(){
+    return Consumer<UserBloc>(
+      builder: (context, bloc, child){
+        String userName = '';
+        if(bloc.isLoggedIn) {
+          userName = bloc.user.displayName;
+        }
+
+        return ListTile(
           title: Text(
-            'Olá',
+            'Olá'+' $userName',
             style: Theme.of(context).textTheme.subhead,
           ),
           subtitle: GestureDetector(
@@ -119,7 +137,45 @@ class CustomDrawer extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  'Entre ou Cadastre-se',
+                  bloc.isLoggedIn ? 'Sair' : 'Entre ou Cadastre-se',
+                  style: Theme.of(context).textTheme.subhead.copyWith(
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.bold),
+                ),
+                Icon(
+                  Icons.arrow_forward,
+                  color: Theme.of(context).primaryColor,
+                  size: 20,
+                ),
+              ],
+            ),
+            onTap: ()=> bloc.isLoggedIn ? _performSignOut(bloc) : _goToSignInPage(context),
+          ),
+        );
+      },
+    );
+
+    return FutureBuilder<FirebaseUser>(
+      future: FirebaseAuth.instance.currentUser(),
+      builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot){
+        String userName = '';
+        bool isLogged = snapshot.hasData;
+        if(isLogged) {
+          userName = snapshot.data.displayName;
+        }
+
+        return ListTile(
+          title: Text(
+            'Olá'+' $userName',
+            style: Theme.of(context).textTheme.subhead,
+          ),
+          subtitle: GestureDetector(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  isLogged ? 'Sair' : 'Entre ou Cadastre-se',
                   style: Theme.of(context).textTheme.subhead.copyWith(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.bold),
@@ -133,16 +189,18 @@ class CustomDrawer extends StatelessWidget {
             ),
             onTap: ()=>_goToSignInPage(context),
           ),
-        )
-      ],
+        );
+      },
     );
-
-    return col;
   }
 
 
   void _goToSignInPage(BuildContext context){
     Navigator.of(context,rootNavigator: true).pushNamed(RootRouter.signIn);
+  }
+
+  void _performSignOut(UserBloc bloc){
+    bloc.signOut();
   }
 
 }
