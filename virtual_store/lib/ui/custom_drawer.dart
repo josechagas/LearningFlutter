@@ -123,7 +123,7 @@ class CustomDrawer extends StatelessWidget {
       builder: (context, bloc, child){
         String userName = '';
         if(bloc.isLoggedIn) {
-          userName = bloc.user.displayName;
+          userName = bloc.userName;
         }
 
         return ListTile(

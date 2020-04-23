@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/login_page_bloc.dart';
+import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/router.dart';
 import 'package:virtual_store/ui/load_action_button.dart';
 
@@ -12,6 +13,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _credentialWidgetWidth = 280.0;
 
   final _passwordTFController = TextEditingController();
@@ -42,6 +44,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Entrar',
@@ -135,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildLoadActionWidget(){
+  Widget _buildLoadActionWidget() {
     return ValueListenableBuilder(
       valueListenable: bloc.isLoading,
       child: Text(
@@ -153,15 +156,43 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<SnackBarClosedReason> _showSignInFailedSnackbar() async {
+    final snackbar = SnackBar(
+      content: Text(
+        'Email ou senha inválido!',
+      ),
+      duration: Duration(seconds: 3),
+    );
+    final controller = _scaffoldKey.currentState.showSnackBar(snackbar);
+    return await controller.closed;
+  }
+
   void _createAccountButtonPressed() {
     Navigator.of(context).pushReplacementNamed(RootRouter.signUp);
   }
 
   void _signInButtonPressed() {
     if (_formKey.currentState.validate()) {
+      final email = _emailTFController.value.text;
+      final password = _passwordTFController.value.text;
       //perform login
-      bloc.performSignIn();
+      bloc.performSignIn(
+          email: email,
+          password: password,
+          onSuccess: _onSignInSuccess,
+          onFailure: _onSignInFailure,
+      );
     }
+  }
+
+  void _onSignInSuccess() {
+    final userBloc = Provider.of<UserBloc>(context, listen: false);
+    userBloc.loadUser();
+    Navigator.of(context).pop();
+  }
+
+  void _onSignInFailure(Object e) {
+    _showSignInFailedSnackbar();
   }
 
   void _forgotPasswordButtonPressed() {}

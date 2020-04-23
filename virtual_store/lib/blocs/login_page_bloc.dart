@@ -1,19 +1,30 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class LoginPageBloc {
   ValueNotifier isLoading = ValueNotifier<bool>(false);
 
-  void dispose(){
+  void dispose() {
     isLoading.dispose();
   }
 
-  Future<void> performSignIn() async {
+  void performSignIn(
+      {@required String email,
+      @required String password,
+      VoidCallback onSuccess,
+      Function(Object) onFailure}) async {
     isLoading.value = true;
 
-    await Future.delayed(Duration(seconds: 3));
-    isLoading.value = false;
-
-    return Future.value();
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((FirebaseUser user) {
+      isLoading.value = false;
+      onSuccess();
+    }).catchError((e) {
+      print(e);
+      isLoading.value = false;
+      onFailure(e);
+    });
   }
 }

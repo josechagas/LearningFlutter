@@ -12,6 +12,7 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _passwordTFController = TextEditingController();
   final _emailTFController = TextEditingController();
   final _nameTFController = TextEditingController();
@@ -47,6 +48,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Criar Conta'),
       ),
@@ -126,6 +128,17 @@ class _SignUpPageState extends State<SignUpPage> {
         });
   }
 
+  Future<SnackBarClosedReason> _showSuccessSnackbar() async {
+    final snackbar = SnackBar(
+      content: Text(
+        'Usuário criado com sucesso!',
+      ),
+      duration: Duration(seconds: 3),
+    );
+    final controller = _scaffoldKey.currentState.showSnackBar(snackbar);
+    return await controller.closed;
+  }
+
   String _validateNotBlank(String text) {
     if (text == null || text.isEmpty) return 'Campo inválido!';
     return null;
@@ -159,7 +172,8 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  void _onSignUpSuccess() {
+  void _onSignUpSuccess() async {
+    final reason = await _showSuccessSnackbar();
     final bloc = Provider.of<UserBloc>(context,listen: false);
     bloc.loadUser();
     Navigator.of(context).pop();
