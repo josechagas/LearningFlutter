@@ -27,4 +27,8 @@ class LoginPageBloc {
       onFailure(e);
     });
   }
+
+  void recoverPassword(String email){
+    FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
 }

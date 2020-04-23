@@ -154,44 +154,6 @@ class CustomDrawer extends StatelessWidget {
         );
       },
     );
-
-    return FutureBuilder<FirebaseUser>(
-      future: FirebaseAuth.instance.currentUser(),
-      builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot){
-        String userName = '';
-        bool isLogged = snapshot.hasData;
-        if(isLogged) {
-          userName = snapshot.data.displayName;
-        }
-
-        return ListTile(
-          title: Text(
-            'Olá'+' $userName',
-            style: Theme.of(context).textTheme.subhead,
-          ),
-          subtitle: GestureDetector(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  isLogged ? 'Sair' : 'Entre ou Cadastre-se',
-                  style: Theme.of(context).textTheme.subhead.copyWith(
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.bold),
-                ),
-                Icon(
-                  Icons.arrow_forward,
-                  color: Theme.of(context).primaryColor,
-                  size: 20,
-                ),
-              ],
-            ),
-            onTap: ()=>_goToSignInPage(context),
-          ),
-        );
-      },
-    );
   }
 
 

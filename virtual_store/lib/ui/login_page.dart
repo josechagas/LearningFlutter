@@ -195,5 +195,24 @@ class _LoginPageState extends State<LoginPage> {
     _showSignInFailedSnackbar();
   }
 
-  void _forgotPasswordButtonPressed() {}
+  void _forgotPasswordButtonPressed() {
+    String message = 'Confira seu email';
+    Color backgroundColor = null;
+    if(_emailTFController.text.isEmpty) {
+      message = 'Insira seu email para recuperação!';
+      backgroundColor = Colors.redAccent;
+    }
+    else {
+      bloc.recoverPassword(_emailTFController.text);
+    }
+
+    final snackbar = SnackBar(
+      content: Text(
+        message,
+      ),
+      backgroundColor: backgroundColor,
+      duration: Duration(seconds: 2),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackbar);
+  }
 }
