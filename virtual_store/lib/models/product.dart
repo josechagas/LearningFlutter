@@ -9,13 +9,21 @@ class Product {
   List<dynamic> sizes;
   String category;
 
-  double get price => priceCents/100.0;
+  double get price => priceCents / 100.0;
 
-  Product.fromDocument(DocumentSnapshot snapshot):
-        id = snapshot.documentID,
+  Product.fromDocument(DocumentSnapshot snapshot)
+      : id = snapshot.documentID,
         title = snapshot.data["title"],
         description = snapshot.data["description"],
         priceCents = snapshot.data["price"],
         images = snapshot.data["images"],
         sizes = snapshot.data["sizes"];
+
+  Map<String, dynamic> toResumedMap() {
+    return {
+      'title': title,
+      'description': description,
+      'price': priceCents,
+    };
+  }
 }
