@@ -1,8 +1,13 @@
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:virtual_store/blocs/cart_bloc.dart';
+import 'package:virtual_store/blocs/user_bloc.dart';
+import 'package:virtual_store/models/cart_product.dart';
 import 'package:virtual_store/models/product.dart';
+import 'package:virtual_store/router.dart';
 
 class ProductPage extends StatefulWidget {
   ProductPage({Key key, @required this.product}) : super(key: key);
@@ -102,13 +107,17 @@ class _ProductPageState extends State<ProductPage> {
         baseSpace,
         SizedBox(
           height: 50,
-          child: RaisedButton(
-            child: Text(
-              'Adicionar ao Carrinho',
-            ),
-            color: Theme.of(context).primaryColor,
-            textColor: Colors.white,
-            onPressed: _selectedSize?.isEmpty ?? true ? null : _onAddToCartButtonPressed,
+          child: Consumer<UserBloc>(
+            builder: (context, bloc, child) {
+              return RaisedButton(
+                child: Text(
+                  bloc.isLoggedIn ? 'Adicionar ao Carrinho' : 'Fazer Login',
+                ),
+                color: Theme.of(context).primaryColor,
+                textColor: Colors.white,
+                onPressed: bloc.isLoggedIn && (_selectedSize?.isEmpty ?? true) ? null : _onAddToCartButtonPressed,
+              );
+            },
           ),
         ),
       ],
@@ -126,29 +135,6 @@ class _ProductPageState extends State<ProductPage> {
       children: product.sizes.map((item) {
         final itemSize = item as String;
         final color = colorFor(itemSize);
-        /*return InkWell(
-          onTap: () => _didSelectItemSize(itemSize),
-          child: Container(
-            width: 70,
-            height: 34,
-            alignment: Alignment.center,
-            child: Text(
-              itemSize as String,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: color
-              ),
-            ),
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 2,
-                color: color,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-        );*/
-
         return MaterialButton(
           child: Text(
             itemSize,
@@ -168,7 +154,20 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _onAddToCartButtonPressed(){
-
+    final userBloc = Provider.of<UserBloc>(context,listen: false);
+    if(userBloc.isLoggedIn) {
+      //add to cart
+      final cartBloc = Provider.of<CartBloc>(context, listen: false);
+      cartBloc.addCartItem(CartProduct(
+        category: product.category,
+        pId: product.id,
+        size: _selectedSize,
+        quantity: 1,
+      ));
+    }
+    else {
+      Navigator.of(context).pushNamed(RootRouter.signIn);
+    }
   }
 
   void _didSelectItemSize(String size) {

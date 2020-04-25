@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:virtual_store/models/product.dart';
 
 class CartProduct {
@@ -9,6 +10,13 @@ class CartProduct {
   String size;
 
   Product productData;
+
+  CartProduct({
+    @required this.size,
+    @required this.pId,
+    @required this.category,
+    this.quantity = 1,
+  });
 
   CartProduct.fromDocument(DocumentSnapshot doc) {
     cId = doc.documentID;
@@ -24,7 +32,7 @@ class CartProduct {
       'pId': pId,
       'quantity': quantity,
       'size': size,
-      'product': productData.toResumedMap(),
+      //'product': productData.toResumedMap(),
     };
   }
 }

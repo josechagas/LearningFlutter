@@ -102,6 +102,7 @@ class _CategoryDetailPageState extends State<CategoryDetailPage> {
   Widget _buildProductTile(
       BuildContext context, DocumentSnapshot doc, ProductTileStyle style) {
     final product = Product.fromDocument(doc);
+    product.category = widget.categorySnapshot.documentID;
     return ProductTile(
       style: style,
       product: product,
