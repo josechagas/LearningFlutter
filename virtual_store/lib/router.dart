@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:virtual_store/ui/cart_page.dart';
 import 'package:virtual_store/ui/category_detail_page.dart';
 import 'package:virtual_store/ui/home_tab.dart';
 import 'package:virtual_store/ui/login_page.dart';
@@ -46,6 +47,7 @@ class RootRouter implements Router {
   static const String productDetail = '/productDetail';
   static const String signUp = '/signUp';
   static const String signIn = '/signIn';
+  static const String cartPage = '/cartPage';
 
   @override
   Route generateRoute(RouteSettings settings) {
@@ -73,6 +75,11 @@ class RootRouter implements Router {
       case signIn: {
         return MaterialPageRoute(
           builder: (context) => LoginPage(),
+        );
+      }
+      case cartPage: {
+        return MaterialPageRoute(
+          builder: (context) => CartPage(),
         );
       }
       default:

@@ -1,0 +1,18 @@
+import 'package:flutter/material.dart';
+import 'package:virtual_store/router.dart';
+
+class CartFloatingButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton(
+      child: Icon(
+        Icons.shopping_cart,
+        color: Colors.white,
+      ),
+      backgroundColor: Theme.of(context).primaryColor,
+      onPressed: (){
+        Navigator.of(context).pushNamed(RootRouter.cartPage);
+      },
+    );
+  }
+}

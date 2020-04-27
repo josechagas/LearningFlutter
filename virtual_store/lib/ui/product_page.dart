@@ -18,13 +18,15 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  Product get product => widget.product;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  Product get product => widget.product;
   String _selectedSize;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           product.title,
@@ -153,6 +155,19 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
+  void showAddedToCartSnabBar(){
+    final snackbarWidget = SnackBar(
+        content: Text(
+          'Item adicionado ao carrinho',
+        ),
+      action: SnackBarAction(
+        label: 'Carrinho',
+        onPressed: _goToCartPage,
+      ),
+    );
+    _scaffoldKey.currentState.showSnackBar(snackbarWidget);
+  }
+
   void _onAddToCartButtonPressed(){
     final userBloc = Provider.of<UserBloc>(context,listen: false);
     if(userBloc.isLoggedIn) {
@@ -164,6 +179,7 @@ class _ProductPageState extends State<ProductPage> {
         size: _selectedSize,
         quantity: 1,
       ));
+      showAddedToCartSnabBar();
     }
     else {
       Navigator.of(context).pushNamed(RootRouter.signIn);
@@ -174,5 +190,9 @@ class _ProductPageState extends State<ProductPage> {
     setState(() {
       _selectedSize = _selectedSize == size ? null : size;
     });
+  }
+
+  void _goToCartPage(){
+    Navigator.of(context,rootNavigator: true).pushNamed(RootRouter.cartPage);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:virtual_store/router.dart';
+import 'package:virtual_store/ui/cart_floating_button.dart';
 import 'package:virtual_store/ui/custom_drawer.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -37,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       body: _buildDrawerNavigator(context),
+      floatingActionButton: CartFloatingButton(),
     );
   }
 
