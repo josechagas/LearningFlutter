@@ -13,7 +13,7 @@ import 'package:virtual_store/ui/login_page.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
 
 void main() {
-  //Intl.defaultLocale = Platform.localeName;
+  Intl.defaultLocale = Platform.localeName;
   //await findSystemLocale();
   //runApp(MyApp());
   runApp(MultiProvider(

@@ -4,10 +4,13 @@ import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/models/cart_product.dart';
 
 class CartBloc extends ChangeNotifier {
-  List<CartProduct> products = [];
-
-  String currentUserId;
   CartBloc({this.currentUserId});
+
+  List<CartProduct> products = [];
+  String currentUserId;
+  bool isLoading = false;
+
+  bool get hasProducts => products != null && products.isNotEmpty;
 
   void didUpdateUserBloc(UserBloc bloc){
     if(bloc.user?.uid != currentUserId) {

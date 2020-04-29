@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class LoadInfoWidget extends StatelessWidget {
 
-  LoadInfoWidget({Key key, @required this.hasError,@required this.onReloadPressed}):super(key: key);
+  LoadInfoWidget({Key key, @required this.hasError,this.onReloadPressed}):super(key: key);
 
   final Function onReloadPressed;
   final bool hasError;
@@ -20,12 +20,15 @@ class LoadInfoWidget extends StatelessWidget {
           SizedBox(
             height: 10,
           ),
-          MaterialButton(
-            child: Text(
-              'Recarregar',
+          Visibility(
+            visible: onReloadPressed != null,
+            child: MaterialButton(
+              child: Text(
+                'Recarregar',
+              ),
+              onPressed: onReloadPressed,
             ),
-            onPressed: onReloadPressed,
-          )
+          ),
         ],
       ),
     );
