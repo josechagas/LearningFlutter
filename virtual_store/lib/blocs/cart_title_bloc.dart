@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:virtual_store/models/cart_product.dart';
 import 'package:virtual_store/models/product.dart';
+
+import 'cart_bloc.dart';
 
 class CartTileBloc {
 
@@ -10,7 +14,6 @@ class CartTileBloc {
   Future<Product> _productInfoFuture;
 
   Future<Product> get productInfoFuture async {
-
     if(_productInfoFuture == null) {
       final snapshotDocument = await Firestore.instance.collection('products').document(cartProd.category)
           .collection('items').document(cartProd.pId).get();
@@ -20,7 +23,22 @@ class CartTileBloc {
 
       _productInfoFuture = Future.value(cartProd.productData);
     }
-
     return _productInfoFuture;
+  }
+
+
+  void removeFromCart(BuildContext context) {
+    final cartBloc = Provider.of<CartBloc>(context, listen:  false);
+    cartBloc.removeCartItem(cartProd);
+  }
+
+  void decrementQuantity(BuildContext context) {
+    final cartBloc = Provider.of<CartBloc>(context, listen:  false);
+    cartBloc.decrementCartItem(this.cartProd);
+  }
+
+  void incrementQuantity(BuildContext context) {
+    final cartBloc = Provider.of<CartBloc>(context, listen:  false);
+    cartBloc.incrementCartItem(this.cartProd);
   }
 }

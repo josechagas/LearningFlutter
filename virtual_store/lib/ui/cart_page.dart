@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/cart_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
+import 'package:virtual_store/models/cart_product.dart';
 import 'package:virtual_store/router.dart';
 import 'package:virtual_store/ui/cart_tile.dart';
 import 'package:virtual_store/ui/load_info_widget.dart';
@@ -41,32 +42,39 @@ class CartPage extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, CartBloc bloc, Widget child) {
     final userBloc = Provider.of<UserBloc>(context, listen: false);
-    if(bloc.isLoading && userBloc.isLoggedIn) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-    else if(!userBloc.isLoggedIn) {
+
+    if(!userBloc.isLoggedIn) {
       return _buildUserNotLoggedWidget(context);
     }
-    else if(!bloc.hasProducts) {
-      return LoadInfoWidget(
-        hasError: false,
-      );
-    }
     else {
-      return ListView(
-        children: <Widget>[
-          Column(
-            children: bloc.products.map((item){
-              return CartTile(item);
-            }).toList(),
-          ),
-        ],
+      return FutureBuilder<List<CartProduct>>(
+        future: bloc.productsFuture,
+        initialData: bloc.products,
+        builder: (context, snapshot){
+          if(snapshot.hasData) {
+            return ListView(
+              children: <Widget>[
+                Column(
+                  children: bloc.products.map((item){
+                    return CartTile(item);
+                  }).toList(),
+                ),
+              ],
+            );
+          }
+          else if(snapshot.connectionState == ConnectionState.active ||
+          snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return LoadInfoWidget(
+            hasError: snapshot.hasError,
+          );
+        },
       );
     }
-
-    return Container();
   }
 
   Widget _buildUserNotLoggedWidget(BuildContext context) {
