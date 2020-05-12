@@ -9,6 +9,9 @@ class CartBloc extends ChangeNotifier {
   List<CartProduct> products = [];
   Future<List<CartProduct>> _productsFuture;
 
+  String couponCode;
+  int discountPercentage = 0;
+
   String currentUserId;
 
   bool get hasProducts => products != null && products.isNotEmpty;
@@ -78,6 +81,11 @@ class CartBloc extends ChangeNotifier {
         .updateData(item.toMap());
 
     notifyListeners();
+  }
+
+  void setCoupon({@required String code, @required int discountPercentage}){
+    this.couponCode = code;
+    this.discountPercentage = discountPercentage;
   }
 
   void _reloadCartItems() async {

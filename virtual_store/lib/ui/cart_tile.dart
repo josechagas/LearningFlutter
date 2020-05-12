@@ -27,26 +27,27 @@ class CartTile extends StatelessWidget {
             : FutureBuilder<Product>(
                 future: bloc.productInfoFuture,
                 initialData: bloc.cartProd.productData,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return _buildContent(context);
-                  } else if (snapshot.connectionState ==
-                          ConnectionState.active ||
-                      snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(
-                      height: 70.0,
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    return LoadInfoWidget(
-                      hasError: snapshot.hasError,
-                    );
-                  }
-                },
+                builder: _buildFuture,
               ),
       ),
     );
+  }
+
+  Widget _buildFuture(context, snapshot) {
+    if (snapshot.hasData) {
+      return _buildContent(context);
+    } else if (snapshot.connectionState == ConnectionState.active ||
+        snapshot.connectionState == ConnectionState.waiting) {
+      return Container(
+        height: 70.0,
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      );
+    } else {
+      return LoadInfoWidget(
+        hasError: snapshot.hasError,
+      );
+    }
   }
 
   Widget _buildContent(BuildContext context) {
