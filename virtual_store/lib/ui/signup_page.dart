@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/signup_page_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
@@ -151,8 +152,9 @@ class _SignUpPageState extends State<SignUpPage> {
 
   String _validatePassword(String password) {
     if (password.isEmpty) return 'Senha inválida!';
-    if (password.length < 6)
+    if (password.length < 6){
       return 'A senha deve conter no minimo 6 caracteres!';
+    }
     return null;
   }
 
@@ -173,9 +175,11 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void _onSignUpSuccess() async {
-    final reason = await _showSuccessSnackbar();
+    final _ = await _showSuccessSnackbar();
     final bloc = Provider.of<UserBloc>(context,listen: false);
-    bloc.loadUser();
+    unawaited(//accordingly to pendantic
+        bloc.loadUser()
+    );
     Navigator.of(context).pop();
   }
 

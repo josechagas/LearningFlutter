@@ -18,8 +18,9 @@ class CartTileBloc {
       final snapshotDocument = await Firestore.instance.collection('products').document(cartProd.category)
           .collection('items').document(cartProd.pId).get();
 
-      if(snapshotDocument != null)
+      if(snapshotDocument != null){
         cartProd.productData = Product.fromDocument(snapshotDocument);
+      }
 
       _productInfoFuture = Future.value(cartProd.productData);
     }

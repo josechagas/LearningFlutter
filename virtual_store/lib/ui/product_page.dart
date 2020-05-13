@@ -2,7 +2,6 @@ import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:virtual_store/blocs/cart_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/models/cart_product.dart';

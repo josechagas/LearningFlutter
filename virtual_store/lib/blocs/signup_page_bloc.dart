@@ -16,7 +16,7 @@ class SignUpPageBloc {
       @required String email,
       @required String password,
       VoidCallback onSuccess,
-      Function(Object) onFailure}) async {
+      Function(Object) onFailure}) {
     isLoading.value = true;
     /*
     try {

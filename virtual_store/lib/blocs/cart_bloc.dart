@@ -16,8 +16,9 @@ class CartBloc extends ChangeNotifier {
 
   bool get hasProducts => products != null && products.isNotEmpty;
   Future<List<CartProduct>> get productsFuture {
-    if(_productsFuture == null)
+    if(_productsFuture == null) {
       _reloadCartItems();
+    }
     return _productsFuture;
   }
 
@@ -88,7 +89,7 @@ class CartBloc extends ChangeNotifier {
     this.discountPercentage = discountPercentage;
   }
 
-  void _reloadCartItems() async {
+  void _reloadCartItems() {
     _productsFuture = _buildProductsFuture();
     _productsFuture.then((prods){
       products = prods;

@@ -99,8 +99,9 @@ class _LoginPageState extends State<LoginPage> {
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             validator: (email) {
-              if (email.isEmpty || !email.contains('@'))
+              if (email.isEmpty || !email.contains('@')){
                 return 'Email inválido';
+              }
               return null;
             },
             onFieldSubmitted: (_) => _passwordNode.requestFocus(),
@@ -197,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _forgotPasswordButtonPressed() {
     String message = 'Confira seu email';
-    Color backgroundColor = null;
+    Color backgroundColor;
     if(_emailTFController.text.isEmpty) {
       message = 'Insira seu email para recuperação!';
       backgroundColor = Colors.redAccent;

@@ -12,8 +12,9 @@ class UserBloc extends ChangeNotifier {
   }
 
   String get userName {
-    if(isLoggedIn)
+    if(isLoggedIn){
       return userData['name'];
+    }
     return null;
   }
 
