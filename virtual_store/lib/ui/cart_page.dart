@@ -8,6 +8,7 @@ import 'package:virtual_store/router.dart';
 import 'package:virtual_store/ui/cart_tile.dart';
 import 'package:virtual_store/ui/discount_card.dart';
 import 'package:virtual_store/ui/load_info_widget.dart';
+import 'package:virtual_store/ui/ship_card.dart';
 
 class CartPage extends StatelessWidget {
   @override
@@ -61,6 +62,7 @@ class CartPage extends StatelessWidget {
                   }).toList(),
                 ),
                 DiscountCard(),
+                ShipCard()
               ],
             );
           }
@@ -114,6 +116,7 @@ class CartPage extends StatelessWidget {
       ),
     );
   }
+
 
 
   void _goToLoginPage(BuildContext context){
