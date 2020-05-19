@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/models/cart_product.dart';
 
@@ -22,6 +23,19 @@ class CartBloc extends ChangeNotifier {
     return _productsFuture;
   }
 
+  double get subtotal {
+    double price = 0;
+    if(hasProducts) {
+      products?.forEach((element) {
+        price += element.productData?.price;
+      });
+    }
+    return price;
+  }
+
+  double get total {
+    return subtotal - subtotal*(discountPercentage/100.0);
+  }
 
   void didUpdateUserBloc(UserBloc bloc) {
     if (bloc.user?.uid != currentUserId) {
@@ -87,6 +101,7 @@ class CartBloc extends ChangeNotifier {
   void setCoupon({@required String code, @required int discountPercentage}){
     this.couponCode = code;
     this.discountPercentage = discountPercentage;
+    notifyListeners();
   }
 
   void _reloadCartItems() {
@@ -109,4 +124,19 @@ class CartBloc extends ChangeNotifier {
 
     return products;
   }
+
+
+  String formattedTotalPrice(){
+    return NumberFormat.simpleCurrency(locale: "pt_BR").format(total);
+  }
+
+  String formattedSubtotal(){
+    return NumberFormat.simpleCurrency(locale: "pt_BR").format(subtotal);
+  }
+
+  String formattedDiscount(){
+    final discountPrice = subtotal*(discountPercentage/100.0);
+    return NumberFormat.simpleCurrency(locale: "pt_BR").format(discountPrice);
+  }
+
 }

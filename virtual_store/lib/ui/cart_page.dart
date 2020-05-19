@@ -5,6 +5,7 @@ import 'package:virtual_store/blocs/cart_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/models/cart_product.dart';
 import 'package:virtual_store/router.dart';
+import 'package:virtual_store/ui/cart_price_card.dart';
 import 'package:virtual_store/ui/cart_tile.dart';
 import 'package:virtual_store/ui/discount_card.dart';
 import 'package:virtual_store/ui/load_info_widget.dart';
@@ -62,7 +63,10 @@ class CartPage extends StatelessWidget {
                   }).toList(),
                 ),
                 DiscountCard(),
-                ShipCard()
+                ShipCard(),
+                CartPriceCard(onFinishOrder: (){
+
+                })
               ],
             );
           }
