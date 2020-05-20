@@ -6,7 +6,7 @@ class CartPriceCard extends StatelessWidget {
 
   CartPriceCard({Key key, @required this.onFinishOrder}):super(key: key);
 
-  VoidCallback onFinishOrder;
+  final VoidCallback onFinishOrder;
 
   @override
   Widget build(BuildContext context) {

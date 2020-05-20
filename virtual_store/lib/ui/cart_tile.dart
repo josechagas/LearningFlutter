@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:virtual_store/blocs/cart_bloc.dart';
 import 'package:virtual_store/blocs/cart_title_bloc.dart';
 import 'package:virtual_store/models/cart_product.dart';
 import 'package:virtual_store/models/product.dart';
 import 'package:virtual_store/ui/load_info_widget.dart';
 
 class CartTile extends StatelessWidget {
-  CartTile(CartProduct cartProd, {Key key})
-      : bloc = CartTileBloc(cartProd),
+  CartTile(CartProduct cartProd, CartBloc cartBloc, {Key key})
+      : bloc = CartTileBloc(cartProd: cartProd, cartBloc: cartBloc),
         super(key: key);
 
   final CartTileBloc bloc;
@@ -99,7 +100,7 @@ class CartTile extends StatelessWidget {
                     color: Theme.of(context).primaryColor,
                     onPressed: bloc.cartProd.quantity <= 1
                         ? null
-                        : () => bloc.decrementQuantity(context),
+                        : bloc.decrementQuantity,
                   ),
                   Text(
                     bloc.cartProd.quantity.toString(),
@@ -109,14 +110,14 @@ class CartTile extends StatelessWidget {
                       Icons.add,
                     ),
                     color: Theme.of(context).primaryColor,
-                    onPressed: () => bloc.incrementQuantity(context),
+                    onPressed: bloc.incrementQuantity,
                   ),
                   MaterialButton(
                     child: Text(
                       'Remover',
                     ),
                     textColor: Colors.grey[400],
-                    onPressed: () => bloc.removeFromCart(context),
+                    onPressed: bloc.removeFromCart,
                   ),
                 ],
               )

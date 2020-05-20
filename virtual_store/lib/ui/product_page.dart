@@ -81,12 +81,12 @@ class _ProductPageState extends State<ProductPage> {
       children: <Widget>[
         Text(
           product.title,
-          style: Theme.of(context).textTheme.headline,
+          style: Theme.of(context).textTheme.headline5,
           maxLines: 3,
         ),
         Text(
           priceText,
-          style: Theme.of(context).textTheme.title.copyWith(
+          style: Theme.of(context).textTheme.headline6.copyWith(
                 color: Theme.of(context).primaryColor,
                 fontWeight: FontWeight.bold,
               ),
@@ -94,7 +94,7 @@ class _ProductPageState extends State<ProductPage> {
         baseSpace,
         Text(
           'Descrição',
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.headline6,
         ),
         Text(
           product.description,
@@ -102,7 +102,7 @@ class _ProductPageState extends State<ProductPage> {
         baseSpace,
         Text(
           'Tamanho',
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.headline6,
         ),
         _buildSizesWidget(),
         baseSpace,

@@ -27,7 +27,7 @@ class CartBloc extends ChangeNotifier {
     double price = 0;
     if(hasProducts) {
       products?.forEach((element) {
-        price += element.productData?.price;
+        price += element.totalPrice;
       });
     }
     return price;
@@ -44,6 +44,10 @@ class CartBloc extends ChangeNotifier {
       _productsFuture = null;
       notifyListeners();
     }
+  }
+
+  void didLoadProductData(){
+    notifyListeners();
   }
 
   void addCartItem(CartProduct item) {

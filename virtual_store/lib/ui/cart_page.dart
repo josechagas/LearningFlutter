@@ -59,7 +59,7 @@ class CartPage extends StatelessWidget {
               children: <Widget>[
                 Column(
                   children: bloc.products.map((item){
-                    return CartTile(item);
+                    return CartTile(item, bloc);
                   }).toList(),
                 ),
                 DiscountCard(),
@@ -102,7 +102,7 @@ class CartPage extends StatelessWidget {
           ),
           Text(
             'Faça login e tenha acesso ao seu carrinho!',
-            style: Theme.of(context).textTheme.headline,
+            style: Theme.of(context).textTheme.headline5,
             textAlign: TextAlign.center,
           ),
           SizedBox(

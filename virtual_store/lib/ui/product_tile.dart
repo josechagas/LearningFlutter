@@ -98,11 +98,11 @@ class ProductTile extends StatelessWidget {
       children: <Widget>[
         Text(
           _product.title,
-          style: Theme.of(context).textTheme.subhead,
+          style: Theme.of(context).textTheme.subtitle1,
         ),
         Text(
           _formattedPrice(),
-          style: Theme.of(context).textTheme.subhead.copyWith(
+          style: Theme.of(context).textTheme.subtitle1.copyWith(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).primaryColor
           ),

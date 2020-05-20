@@ -11,6 +11,13 @@ class CartProduct {
 
   Product productData;
 
+  double get totalPrice {
+    if(productData != null) {
+      return quantity*productData.price;
+    }
+    return 0;
+  }
+
   CartProduct({
     @required this.size,
     @required this.pId,

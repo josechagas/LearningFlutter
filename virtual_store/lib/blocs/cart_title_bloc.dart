@@ -8,9 +8,11 @@ import 'cart_bloc.dart';
 
 class CartTileBloc {
 
-  CartTileBloc(this.cartProd);
+  CartTileBloc({@required this.cartProd, @required this.cartBloc});
 
   final CartProduct cartProd;
+  final CartBloc cartBloc;
+
   Future<Product> _productInfoFuture;
 
   Future<Product> get productInfoFuture async {
@@ -20,6 +22,7 @@ class CartTileBloc {
 
       if(snapshotDocument != null){
         cartProd.productData = Product.fromDocument(snapshotDocument);
+        cartBloc.didLoadProductData();
       }
 
       _productInfoFuture = Future.value(cartProd.productData);
@@ -28,18 +31,15 @@ class CartTileBloc {
   }
 
 
-  void removeFromCart(BuildContext context) {
-    final cartBloc = Provider.of<CartBloc>(context, listen:  false);
+  void removeFromCart() {
     cartBloc.removeCartItem(cartProd);
   }
 
-  void decrementQuantity(BuildContext context) {
-    final cartBloc = Provider.of<CartBloc>(context, listen:  false);
+  void decrementQuantity() {
     cartBloc.decrementCartItem(this.cartProd);
   }
 
-  void incrementQuantity(BuildContext context) {
-    final cartBloc = Provider.of<CartBloc>(context, listen:  false);
+  void incrementQuantity() {
     cartBloc.incrementCartItem(this.cartProd);
   }
 }

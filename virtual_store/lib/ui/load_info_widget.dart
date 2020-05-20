@@ -15,7 +15,7 @@ class LoadInfoWidget extends StatelessWidget {
         children: <Widget>[
           Text(
             hasError ? 'Ocorreu um erro!!!' : 'Nada por aqui!!',
-            style: Theme.of(context).textTheme.title,
+            style: Theme.of(context).textTheme.headline6,
           ),
           SizedBox(
             height: 10,

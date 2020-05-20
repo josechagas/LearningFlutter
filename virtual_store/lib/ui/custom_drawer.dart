@@ -81,7 +81,7 @@ class CustomDrawer extends StatelessWidget {
       selected: option == selectedOption,
       title:  Text(
         title,
-        style: Theme.of(context).textTheme.subhead,
+        style: Theme.of(context).textTheme.subtitle1,
       ),
       leading: Icon(
         icon,
@@ -128,7 +128,7 @@ class CustomDrawer extends StatelessWidget {
         return ListTile(
           title: Text(
             'Olá'+' $userName',
-            style: Theme.of(context).textTheme.subhead,
+            style: Theme.of(context).textTheme.subtitle1,
           ),
           subtitle: GestureDetector(
             child: Row(
@@ -137,7 +137,7 @@ class CustomDrawer extends StatelessWidget {
               children: <Widget>[
                 Text(
                   bloc.isLoggedIn ? 'Sair' : 'Entre ou Cadastre-se',
-                  style: Theme.of(context).textTheme.subhead.copyWith(
+                  style: Theme.of(context).textTheme.subtitle1.copyWith(
                       color: Theme.of(context).primaryColor,
                       fontWeight: FontWeight.bold),
                 ),
