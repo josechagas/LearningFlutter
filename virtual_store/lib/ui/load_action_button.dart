@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class LoadActionButton extends StatelessWidget {
 
-  LoadActionButton({Key key,@required this.child,@required this.isLoading, this.width = double.infinity, this.height = 50,@required this.onPressed}):super(key: key);
+  LoadActionButton({Key key,@required this.child,@required this.isLoading, this.width = double.infinity, this.height,@required this.onPressed}):super(key: key);
 
   final bool isLoading;
   final double width;
@@ -15,7 +15,8 @@ class LoadActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final avoidClipShadowInset = EdgeInsets.symmetric(vertical: 5, horizontal: 2);
     final duration = Duration(milliseconds: 120);
-
+    final basePaddingValue = 10.0;
+    final height = this.height ?? Theme.of(context).buttonTheme.height;
     return AnimatedCrossFade(//clip the childs, making a button have its shadow clipped.
       firstChild: Padding(
         padding: avoidClipShadowInset,
@@ -29,7 +30,7 @@ class LoadActionButton extends StatelessWidget {
           color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(height/2),
         ),
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(basePaddingValue),
         child: isLoading ? CircularProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
         ) : null,
@@ -50,9 +51,6 @@ class LoadActionButton extends StatelessWidget {
       child: RaisedButton(
         textColor: Colors.white,
         color: Theme.of(context).primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
         child: this.child,
         onPressed: onPressed,
       ),

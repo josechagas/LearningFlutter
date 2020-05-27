@@ -6,6 +6,7 @@ import 'package:virtual_store/models/cart_product.dart';
 
 class CartBloc extends ChangeNotifier {
   CartBloc({this.currentUserId});
+  bool isFinishingOrder = false;
 
   List<CartProduct> products = [];
   Future<List<CartProduct>> _productsFuture;
@@ -17,15 +18,17 @@ class CartBloc extends ChangeNotifier {
 
   bool get hasProducts => products != null && products.isNotEmpty;
   Future<List<CartProduct>> get productsFuture {
-    if(_productsFuture == null) {
+    if (_productsFuture == null) {
       _reloadCartItems();
     }
     return _productsFuture;
   }
 
+  double shipPrice = 0.0;
+
   double get subtotal {
     double price = 0;
-    if(hasProducts) {
+    if (hasProducts) {
       products?.forEach((element) {
         price += element.totalPrice;
       });
@@ -33,8 +36,12 @@ class CartBloc extends ChangeNotifier {
     return price;
   }
 
+  double get discountPrice {
+    return subtotal * (discountPercentage / 100.0);
+  }
+
   double get total {
-    return subtotal - subtotal*(discountPercentage/100.0);
+    return subtotal - discountPrice + shipPrice;
   }
 
   void didUpdateUserBloc(UserBloc bloc) {
@@ -46,7 +53,7 @@ class CartBloc extends ChangeNotifier {
     }
   }
 
-  void didLoadProductData(){
+  void didLoadProductData() {
     notifyListeners();
   }
 
@@ -102,7 +109,7 @@ class CartBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setCoupon({@required String code, @required int discountPercentage}){
+  void setCoupon({@required String code, @required int discountPercentage}) {
     this.couponCode = code;
     this.discountPercentage = discountPercentage;
     notifyListeners();
@@ -110,7 +117,7 @@ class CartBloc extends ChangeNotifier {
 
   void _reloadCartItems() {
     _productsFuture = _buildProductsFuture();
-    _productsFuture.then((prods){
+    _productsFuture.then((prods) {
       products = prods;
       notifyListeners();
     });
@@ -120,27 +127,76 @@ class CartBloc extends ChangeNotifier {
     QuerySnapshot snapshot = await Firestore.instance
         .collection('users')
         .document(currentUserId)
-        .collection('cart').getDocuments();
+        .collection('cart')
+        .getDocuments();
 
-    final products = snapshot.documents.map((doc){
+    final products = snapshot.documents.map((doc) {
       return CartProduct.fromDocument(doc);
     }).toList();
 
     return products;
   }
 
+  Future<String> finishOrder() async {
+    if (hasProducts) {
+      isFinishingOrder = true;
+      notifyListeners();
+      final subtotalPrice = subtotal;
+      final discount = discountPrice;
+      final shipPrice = this.shipPrice;
 
-  String formattedTotalPrice(){
+      DocumentReference refOrder =
+          await Firestore.instance.collection('orders').add(
+        {
+          'clientId': currentUserId,
+          'products': products.map((prod) => prod.toMap()).toList(),
+          'shipPrice': shipPrice,
+          'productsPrice': subtotalPrice,
+          'discount': discount,
+          'totalPrice': this.total,
+          'status': 1,
+        },
+      );
+
+      await Firestore.instance
+          .collection('users')
+          .document(this.currentUserId)
+          .collection('orders')
+          .document(refOrder.documentID)
+          .setData(
+        {
+          'orderId': refOrder.documentID,
+        },
+      );
+
+      QuerySnapshot query = await Firestore.instance.collection('users').document(this.currentUserId).collection('cart').getDocuments();
+      query.documents.forEach((doc) {
+        doc.reference.delete();
+      });
+
+      products.clear();
+      couponCode = null;
+      discountPercentage = 0;
+      isFinishingOrder = false;
+      notifyListeners();
+      return refOrder.documentID;
+    }
+    return null;
+  }
+
+  String formattedTotalPrice() {
     return NumberFormat.simpleCurrency(locale: "pt_BR").format(total);
   }
 
-  String formattedSubtotal(){
+  String formattedSubtotal() {
     return NumberFormat.simpleCurrency(locale: "pt_BR").format(subtotal);
   }
 
-  String formattedDiscount(){
-    final discountPrice = subtotal*(discountPercentage/100.0);
+  String formattedDiscount() {
     return NumberFormat.simpleCurrency(locale: "pt_BR").format(discountPrice);
   }
 
+  String formattedShipPrice() {
+    return NumberFormat.simpleCurrency(locale: "pt_BR").format(shipPrice);
+  }
 }

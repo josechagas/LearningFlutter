@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/cart_bloc.dart';
+import 'package:virtual_store/ui/load_action_button.dart';
 
 class CartPriceCard extends StatelessWidget {
-
-  CartPriceCard({Key key, @required this.onFinishOrder}):super(key: key);
+  CartPriceCard({Key key, @required this.onFinishOrder}) : super(key: key);
 
   final VoidCallback onFinishOrder;
 
@@ -41,7 +41,7 @@ class CartPriceCard extends StatelessWidget {
             Divider(),
             _buildRow(
               title: 'Entrega',
-              price: bloc.formattedTotalPrice(),
+              price: bloc.formattedShipPrice(),
             ),
             SizedBox(
               height: 20,
@@ -50,10 +50,10 @@ class CartPriceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                    'Total',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  'Total',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Text(
                   bloc.formattedTotalPrice(),
@@ -67,14 +67,13 @@ class CartPriceCard extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            RaisedButton(
-              color: Theme.of(context).primaryColor,
+            LoadActionButton(
+              isLoading: bloc.isFinishingOrder,
               child: Text(
                 'Finalizar Pedido',
               ),
-              textColor: Colors.white,
               onPressed: onFinishOrder,
-            )
+            ),
           ],
         ),
       ),

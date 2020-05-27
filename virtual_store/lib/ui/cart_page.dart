@@ -54,7 +54,7 @@ class CartPage extends StatelessWidget {
         future: bloc.productsFuture,
         initialData: bloc.products,
         builder: (context, snapshot){
-          if(snapshot.hasData) {
+          if(snapshot.hasData && snapshot.data.isNotEmpty) {
             return ListView(
               children: <Widget>[
                 Column(
@@ -64,8 +64,11 @@ class CartPage extends StatelessWidget {
                 ),
                 DiscountCard(),
                 ShipCard(),
-                CartPriceCard(onFinishOrder: (){
-
+                CartPriceCard(onFinishOrder: () async {
+                  String orderId = await bloc.finishOrder();
+                  if(orderId != null) {
+                    print(orderId);
+                  }
                 })
               ],
             );
