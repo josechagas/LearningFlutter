@@ -67,12 +67,14 @@ class CartPriceCard extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            LoadActionButton(
-              isLoading: bloc.isFinishingOrder,
-              child: Text(
-                'Finalizar Pedido',
+            Center(
+              child: LoadActionButton(
+                isLoading: bloc.isFinishingOrder,
+                child: Text(
+                  'Finalizar Pedido',
+                ),
+                onPressed: onFinishOrder,
               ),
-              onPressed: onFinishOrder,
             ),
           ],
         ),

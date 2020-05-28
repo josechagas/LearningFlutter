@@ -5,6 +5,7 @@ import 'package:virtual_store/ui/category_detail_page.dart';
 import 'package:virtual_store/ui/home_tab.dart';
 import 'package:virtual_store/ui/login_page.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
+import 'package:virtual_store/ui/order_page.dart';
 import 'package:virtual_store/ui/product_page.dart';
 import 'package:virtual_store/ui/products_tab.dart';
 import 'package:virtual_store/ui/signup_page.dart';
@@ -48,6 +49,7 @@ class RootRouter implements Router {
   static const String signUp = '/signUp';
   static const String signIn = '/signIn';
   static const String cartPage = '/cartPage';
+  static const String orderPage = '/orderPage';
 
   @override
   Route generateRoute(RouteSettings settings) {
@@ -80,6 +82,11 @@ class RootRouter implements Router {
       case cartPage: {
         return MaterialPageRoute(
           builder: (context) => CartPage(),
+        );
+      }
+      case orderPage: {
+        return MaterialPageRoute(
+          builder: (context) => OrderPage(orderId: settings.arguments,),
         );
       }
       default:

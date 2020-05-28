@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/cart_bloc.dart';
@@ -24,7 +23,7 @@ class CartPage extends StatelessWidget {
             alignment: Alignment.center,
             padding: EdgeInsets.only(right: 8),
             child: Consumer<CartBloc>(
-              builder: (context, bloc, child){
+              builder: (context, bloc, child) {
                 final int count = bloc.products.length ?? 0;
                 return Text(
                   '$count ${count == 1 ? 'ITEM' : 'ITENS'}',
@@ -46,19 +45,18 @@ class CartPage extends StatelessWidget {
   Widget _buildBody(BuildContext context, CartBloc bloc, Widget child) {
     final userBloc = Provider.of<UserBloc>(context, listen: false);
 
-    if(!userBloc.isLoggedIn) {
+    if (!userBloc.isLoggedIn) {
       return _buildUserNotLoggedWidget(context);
-    }
-    else {
+    } else {
       return FutureBuilder<List<CartProduct>>(
         future: bloc.productsFuture,
         initialData: bloc.products,
-        builder: (context, snapshot){
-          if(snapshot.hasData && snapshot.data.isNotEmpty) {
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data.isNotEmpty) {
             return ListView(
               children: <Widget>[
                 Column(
-                  children: bloc.products.map((item){
+                  children: bloc.products.map((item) {
                     return CartTile(item, bloc);
                   }).toList(),
                 ),
@@ -66,15 +64,15 @@ class CartPage extends StatelessWidget {
                 ShipCard(),
                 CartPriceCard(onFinishOrder: () async {
                   String orderId = await bloc.finishOrder();
-                  if(orderId != null) {
-                    print(orderId);
+                  if (orderId != null) {
+                    await Navigator.of(context)
+                        .pushReplacementNamed(RootRouter.orderPage,arguments: orderId);
                   }
                 })
               ],
             );
-          }
-          else if(snapshot.connectionState == ConnectionState.active ||
-          snapshot.connectionState == ConnectionState.waiting) {
+          } else if (snapshot.connectionState == ConnectionState.active ||
+              snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(),
             );
@@ -112,9 +110,7 @@ class CartPage extends StatelessWidget {
             height: 10,
           ),
           RaisedButton(
-            child: Text(
-                'Entrar'
-            ),
+            child: Text('Entrar'),
             color: Theme.of(context).primaryColor,
             textColor: Colors.white,
             onPressed: () => _goToLoginPage(context),
@@ -124,9 +120,7 @@ class CartPage extends StatelessWidget {
     );
   }
 
-
-
-  void _goToLoginPage(BuildContext context){
+  void _goToLoginPage(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pushNamed(RootRouter.signIn);
   }
 }
