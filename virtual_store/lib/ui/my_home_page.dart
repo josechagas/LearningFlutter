@@ -26,7 +26,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 211, 118, 130),
+        //backgroundColor: Color.fromARGB(255, 211, 118, 130),
         centerTitle: true,
         title: ValueListenableBuilder(
           valueListenable: currentDrawerItem,
@@ -87,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _goToMyOrders(BuildContext context) {
     currentDrawerItem.value = DrawerOption.myOrders;
-    //navigatorKey.currentState.pushReplacementNamed(DrawerRouter.homePage2);
-    //Navigator.of(context).pop();
+    navigatorKey.currentState.pushReplacementNamed(DrawerRouter.myOrders);
+    Navigator.of(context).pop();
   }
 
   String appBarTitleForSelectedDrawer(DrawerOption item) {
@@ -97,6 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
         return 'Novidades';
       case DrawerOption.products:
         return 'Produtos';
+      case DrawerOption.myOrders:
+        return 'Meus Pedidos';
       default:
         return "Flutter's Clothing";
     }

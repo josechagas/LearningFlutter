@@ -5,6 +5,7 @@ import 'package:virtual_store/ui/category_detail_page.dart';
 import 'package:virtual_store/ui/home_tab.dart';
 import 'package:virtual_store/ui/login_page.dart';
 import 'package:virtual_store/ui/my_home_page.dart';
+import 'package:virtual_store/ui/my_orders_tab.dart';
 import 'package:virtual_store/ui/order_page.dart';
 import 'package:virtual_store/ui/product_page.dart';
 import 'package:virtual_store/ui/products_tab.dart';
@@ -16,7 +17,7 @@ abstract class Router {
 
 class DrawerRouter implements Router {
   static const String homePage = '/';
-  static const String homePage2 = '/homePage2';
+  static const String myOrders = '/myOrders';
   static const String products = '/products';
   @override
   Route generateRoute(RouteSettings settings) {
@@ -31,9 +32,9 @@ class DrawerRouter implements Router {
           builder: (context) => ProductsTab(),
         );
       }
-      case homePage2: {
+      case myOrders: {
         return MaterialPageRoute(
-          builder: (context) => HomeScreen2(),
+          builder: (context) => MyOrdersTab(),
         );
       }
       default:

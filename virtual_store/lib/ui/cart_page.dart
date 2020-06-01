@@ -9,6 +9,7 @@ import 'package:virtual_store/ui/cart_tile.dart';
 import 'package:virtual_store/ui/discount_card.dart';
 import 'package:virtual_store/ui/load_info_widget.dart';
 import 'package:virtual_store/ui/ship_card.dart';
+import 'package:virtual_store/ui/user_not_logged_info_widget.dart';
 
 class CartPage extends StatelessWidget {
   @override
@@ -87,40 +88,10 @@ class CartPage extends StatelessWidget {
   }
 
   Widget _buildUserNotLoggedWidget(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(20),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Icon(
-            Icons.remove_shopping_cart,
-            size: 80,
-            color: Theme.of(context).primaryColor,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Faça login e tenha acesso ao seu carrinho!',
-            style: Theme.of(context).textTheme.headline5,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          RaisedButton(
-            child: Text('Entrar'),
-            color: Theme.of(context).primaryColor,
-            textColor: Colors.white,
-            onPressed: () => _goToLoginPage(context),
-          ),
-        ],
-      ),
+    return UserNotLoggedInfoWidget(
+      icon: Icons.remove_shopping_cart,
+      message: 'Faça login e tenha acesso ao seu carrinho!',
     );
   }
 
-  void _goToLoginPage(BuildContext context) {
-    Navigator.of(context, rootNavigator: true).pushNamed(RootRouter.signIn);
-  }
 }
