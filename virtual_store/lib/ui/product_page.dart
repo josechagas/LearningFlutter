@@ -116,7 +116,9 @@ class _ProductPageState extends State<ProductPage> {
                 ),
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
-                onPressed: bloc.isLoggedIn && (_selectedSize?.isEmpty ?? true) ? null : _onAddToCartButtonPressed,
+                onPressed: bloc.isLoggedIn && (_selectedSize?.isEmpty ?? true)
+                    ? null
+                    : _onAddToCartButtonPressed,
               );
             },
           ),
@@ -154,11 +156,11 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  void showAddedToCartSnabBar(){
+  void showAddedToCartSnabBar() {
     final snackbarWidget = SnackBar(
-        content: Text(
-          'Item adicionado ao carrinho',
-        ),
+      content: Text(
+        'Item adicionado ao carrinho',
+      ),
       action: SnackBarAction(
         label: 'Carrinho',
         onPressed: _goToCartPage,
@@ -167,20 +169,22 @@ class _ProductPageState extends State<ProductPage> {
     _scaffoldKey.currentState.showSnackBar(snackbarWidget);
   }
 
-  void _onAddToCartButtonPressed(){
-    final userBloc = Provider.of<UserBloc>(context,listen: false);
-    if(userBloc.isLoggedIn) {
+  void _onAddToCartButtonPressed() {
+    final userBloc = Provider.of<UserBloc>(context, listen: false);
+    if (userBloc.isLoggedIn) {
       //add to cart
-      final cartBloc = Provider.of<CartBloc>(context, listen: false);
-      cartBloc.addCartItem(CartProduct(
+      final cartProd = CartProduct(
         category: product.category,
         pId: product.id,
         size: _selectedSize,
         quantity: 1,
-      ));
+      );
+      final cartBloc = Provider.of<CartBloc>(context, listen: false);
+      cartProd.productData = this
+          .product; //to avoid errors on method to get resumed map of product.
+      cartBloc.addCartItem(cartProd);
       showAddedToCartSnabBar();
-    }
-    else {
+    } else {
       Navigator.of(context).pushNamed(RootRouter.signIn);
     }
   }
@@ -191,7 +195,7 @@ class _ProductPageState extends State<ProductPage> {
     });
   }
 
-  void _goToCartPage(){
-    Navigator.of(context,rootNavigator: true).pushNamed(RootRouter.cartPage);
+  void _goToCartPage() {
+    Navigator.of(context, rootNavigator: true).pushNamed(RootRouter.cartPage);
   }
 }
