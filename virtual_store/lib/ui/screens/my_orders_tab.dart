@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/my_orders_tab_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
-import 'package:virtual_store/ui/load_info_widget.dart';
-import 'package:virtual_store/ui/order_tile.dart';
-import 'package:virtual_store/ui/user_not_logged_info_widget.dart';
+import 'package:virtual_store/ui/widgets/load_info_widget.dart';
+import 'package:virtual_store/ui/tiles/order_tile.dart';
+import 'package:virtual_store/ui/widgets/user_not_logged_info_widget.dart';
 
 class MyOrdersTab extends StatefulWidget {
   @override
@@ -62,7 +62,7 @@ class _MyOrdersTabState extends State<MyOrdersTab> {
             return ListView(
               children: snapshot.data.documents
                   .map((doc) => OrderTile(orderId: doc.documentID))
-                  .toList(),
+                  .toList().reversed.toList(),
             );
           }
           return LoadInfoWidget(

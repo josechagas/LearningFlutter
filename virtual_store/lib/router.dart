@@ -1,15 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:virtual_store/ui/cart_page.dart';
-import 'package:virtual_store/ui/category_detail_page.dart';
-import 'package:virtual_store/ui/home_tab.dart';
-import 'package:virtual_store/ui/login_page.dart';
-import 'package:virtual_store/ui/my_home_page.dart';
-import 'package:virtual_store/ui/my_orders_tab.dart';
-import 'package:virtual_store/ui/order_page.dart';
-import 'package:virtual_store/ui/product_page.dart';
-import 'package:virtual_store/ui/products_tab.dart';
-import 'package:virtual_store/ui/signup_page.dart';
+import 'package:virtual_store/ui/screens/cart_page.dart';
+import 'package:virtual_store/ui/screens/category_detail_page.dart';
+import 'package:virtual_store/ui/screens/home_tab.dart';
+import 'package:virtual_store/ui/screens/login_page.dart';
+import 'package:virtual_store/ui/screens/my_home_page.dart';
+import 'package:virtual_store/ui/screens/my_orders_tab.dart';
+import 'package:virtual_store/ui/screens/order_page.dart';
+import 'package:virtual_store/ui/screens/places_tab.dart';
+import 'package:virtual_store/ui/screens/product_page.dart';
+import 'package:virtual_store/ui/screens/products_tab.dart';
+import 'package:virtual_store/ui/screens/signup_page.dart';
 
 abstract class Router {
   Route<dynamic> generateRoute(RouteSettings settings);
@@ -19,6 +19,7 @@ class DrawerRouter implements Router {
   static const String homePage = '/';
   static const String myOrders = '/myOrders';
   static const String products = '/products';
+  static const String findStore = '/findStore';
   @override
   Route generateRoute(RouteSettings settings) {
     switch (settings.name){
@@ -35,6 +36,11 @@ class DrawerRouter implements Router {
       case myOrders: {
         return MaterialPageRoute(
           builder: (context) => MyOrdersTab(),
+        );
+      }
+      case findStore: {
+        return MaterialPageRoute(
+          builder: (context) => PlacesTab(),
         );
       }
       default:

@@ -4,12 +4,12 @@ import 'package:virtual_store/blocs/cart_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/models/cart_product.dart';
 import 'package:virtual_store/router.dart';
-import 'package:virtual_store/ui/cart_price_card.dart';
-import 'package:virtual_store/ui/cart_tile.dart';
-import 'package:virtual_store/ui/discount_card.dart';
-import 'package:virtual_store/ui/load_info_widget.dart';
-import 'package:virtual_store/ui/ship_card.dart';
-import 'package:virtual_store/ui/user_not_logged_info_widget.dart';
+import 'package:virtual_store/ui/widgets/cart_price_card.dart';
+import 'package:virtual_store/ui/tiles/cart_tile.dart';
+import 'package:virtual_store/ui/widgets/discount_card.dart';
+import 'package:virtual_store/ui/widgets/load_info_widget.dart';
+import 'package:virtual_store/ui/widgets/ship_card.dart';
+import 'package:virtual_store/ui/widgets/user_not_logged_info_widget.dart';
 
 class CartPage extends StatelessWidget {
   @override

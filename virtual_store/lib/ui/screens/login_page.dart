@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/login_page_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/router.dart';
-import 'package:virtual_store/ui/load_action_button.dart';
+import 'package:virtual_store/ui/widgets/load_action_button.dart';
 
 class LoginPage extends StatefulWidget {
   @override

@@ -4,7 +4,7 @@ import 'package:pedantic/pedantic.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/signup_page_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
-import 'package:virtual_store/ui/load_action_button.dart';
+import 'package:virtual_store/ui/widgets/load_action_button.dart';
 
 class SignUpPage extends StatefulWidget {
   @override

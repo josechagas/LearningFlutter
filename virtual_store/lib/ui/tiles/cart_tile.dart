@@ -5,7 +5,7 @@ import 'package:virtual_store/blocs/cart_bloc.dart';
 import 'package:virtual_store/blocs/cart_title_bloc.dart';
 import 'package:virtual_store/models/cart_product.dart';
 import 'package:virtual_store/models/product.dart';
-import 'package:virtual_store/ui/load_info_widget.dart';
+import 'package:virtual_store/ui/widgets/load_info_widget.dart';
 
 class CartTile extends StatelessWidget {
   CartTile(CartProduct cartProd, CartBloc cartBloc, {Key key})

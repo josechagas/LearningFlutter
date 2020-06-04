@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/cart_bloc.dart';
-import 'package:virtual_store/ui/load_action_button.dart';
+import 'package:virtual_store/ui/widgets/load_action_button.dart';
 
 class CartPriceCard extends StatelessWidget {
   CartPriceCard({Key key, @required this.onFinishOrder}) : super(key: key);

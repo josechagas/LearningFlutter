@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:virtual_store/blocs/cart_bloc.dart';
 import 'package:virtual_store/blocs/user_bloc.dart';
 import 'package:virtual_store/router.dart';
-import 'package:virtual_store/ui/my_home_page.dart';
+import 'package:virtual_store/ui/screens/my_home_page.dart';
 
 void main() {
   Intl.defaultLocale = Platform.localeName;

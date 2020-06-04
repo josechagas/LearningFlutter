@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:virtual_store/router.dart';
-import 'package:virtual_store/ui/cart_floating_button.dart';
-import 'package:virtual_store/ui/custom_drawer.dart';
+import 'package:virtual_store/ui/widgets/cart_floating_button.dart';
+import 'package:virtual_store/ui/widgets/custom_drawer.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -81,8 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _goToFindAStore(BuildContext context) {
     currentDrawerItem.value = DrawerOption.findStore;
-    //navigatorKey.currentState.pushReplacementNamed(DrawerRouter.homePage2);
-    //Navigator.of(context).pop();
+    navigatorKey.currentState.pushReplacementNamed(DrawerRouter.findStore);
+    Navigator.of(context).pop();
   }
 
   void _goToMyOrders(BuildContext context) {
@@ -99,6 +99,8 @@ class _MyHomePageState extends State<MyHomePage> {
         return 'Produtos';
       case DrawerOption.myOrders:
         return 'Meus Pedidos';
+      case DrawerOption.findStore:
+        return 'Lojas';
       default:
         return "Flutter's Clothing";
     }

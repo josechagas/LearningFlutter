@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_store/models/product.dart';
-import 'package:virtual_store/ui/load_info_widget.dart';
-import 'package:virtual_store/ui/product_tile.dart';
+import 'package:virtual_store/ui/widgets/load_info_widget.dart';
+import 'package:virtual_store/ui/tiles/product_tile.dart';
 
 class CategoryDetailPage extends StatefulWidget {
   CategoryDetailPage({Key key, @required this.categorySnapshot})
