@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class PlaceTile extends StatelessWidget {
 
@@ -12,6 +14,9 @@ class PlaceTile extends StatelessWidget {
     final String imageUrl = place.data['image'];
     final String title = place.data['title'];
     final String address = place.data['address'];
+    final String phoneNumber = place.data['phone'];
+    final GeoPoint geolocation = place.data['geolocation'];
+
     return Card(
       clipBehavior: Clip.hardEdge,
       margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -45,8 +50,35 @@ class PlaceTile extends StatelessWidget {
               ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              FlatButton(
+                child: Text(
+                  'Ver no Mapa',
+                ),
+                textColor: Colors.blue,
+                onPressed: () => _showOnMap(geolocation.latitude, geolocation.longitude),
+              ),
+              FlatButton(
+                child: Text(
+                  'Ligar',
+                ),
+                textColor: Colors.blue,
+                onPressed: () => _makeACall(phoneNumber),
+              )
+            ],
+          )
         ],
       ),
     );
+  }
+
+  void _makeACall(String phoneNumber) {
+    launch('tel:$phoneNumber');
+  }
+
+  void _showOnMap(double latitude, double longitude) {
+    launch('https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
   }
 }

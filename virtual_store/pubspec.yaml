@@ -30,7 +30,8 @@ dependencies:
   transparent_image: ^1.0.0
   #scoped_model: ^1.0.1 #changed to provider
   firebase_auth: ^0.11.1+12
-  #url_launcher: ^5.1.1
+  url_launcher: ^5.1.1
+
 
   provider: ^4.0.4
   pedantic: any
