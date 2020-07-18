@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:youtube_favorites/envs.dart';
 import 'package:youtube_favorites/models/video.dart';
 
-const API_KEY = 'AIzaSyD4dMWpYuD4Me8HLDJJgeT-DhEJkLEsrGU';
 
 class YoutubeApiProvider {
   const YoutubeApiProvider();
@@ -16,7 +16,7 @@ class YoutubeApiProvider {
         'part=snippet&'
         'q=$search&'
         'type=$type&'
-        'key=$API_KEY&'
+        'key=${Constants.youtubeApiKey}&'
         'maxResults=$maxResults';
     http.Response response = await http.get(url);
     decode(response);
