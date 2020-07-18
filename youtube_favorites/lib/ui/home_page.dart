@@ -5,12 +5,14 @@ import 'package:youtube_favorites/blocs/videos_bloc.dart';
 import 'package:youtube_favorites/delegates/data_search.dart';
 import 'package:youtube_favorites/models/video.dart';
 import 'package:youtube_favorites/ui/load_info_widget.dart';
+import 'package:youtube_favorites/ui/widgets/video_tile.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<VideosBloc>(context).outVideos;
     return Scaffold(
+      backgroundColor: Colors.black87,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.black87,
@@ -44,33 +46,19 @@ class HomePage extends StatelessWidget {
       body: StreamBuilder<List<Video>>(
         stream: bloc,
         builder: (context, snapshot){
-          if(snapshot.connectionState == ConnectionState.active ||
-          snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
           if(snapshot.hasData) {
             return ListView.builder(
                 itemBuilder: (context, index){
                   final video = snapshot.data[index];
-                  return _buildVideoListItem(context, video);
+                  return VideoTile(video);
                 },
                 itemCount: snapshot.data.length,
             );
           }
-
-          return LoadInfoWidget(
-            hasError: snapshot.hasError,
-          );
+          return Container();
         },
       ),
     );
-  }
-
-  Widget _buildVideoListItem(BuildContext context, Video video) {
-    return Container();
   }
 
   Future<void> startSearch(BuildContext context) async {
