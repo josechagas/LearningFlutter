@@ -8,7 +8,7 @@ import 'package:youtube_favorites/models/video.dart';
 class YoutubeApiProvider {
   const YoutubeApiProvider();
 
-  void search(String search) async {
+  Future<List<Video>> search(String search) async {
     final type = 'video';
     final maxResults = 10;
     String url =
@@ -19,7 +19,7 @@ class YoutubeApiProvider {
         'key=${Constants.youtubeApiKey}&'
         'maxResults=$maxResults';
     http.Response response = await http.get(url);
-    decode(response);
+    return decode(response);
   }
 
 
