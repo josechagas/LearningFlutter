@@ -10,7 +10,7 @@ import 'package:youtube_favorites/ui/widgets/video_tile.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final bloc = BlocProvider.of<VideosBloc>(context).outVideos;
+    final bloc = BlocProvider.of<VideosBloc>(context);
     return Scaffold(
       backgroundColor: Colors.black87,
       appBar: AppBar(
@@ -44,15 +44,28 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: StreamBuilder<List<Video>>(
-        stream: bloc,
+        stream: bloc.outVideos,
         builder: (context, snapshot){
           if(snapshot.hasData) {
             return ListView.builder(
                 itemBuilder: (context, index){
-                  final video = snapshot.data[index];
-                  return VideoTile(video);
+                  if(index < snapshot.data.length) {
+                    final video = snapshot.data[index];
+                    return VideoTile(video);
+                  }
+                  else if(index > 1){
+                    bloc.inSearch.add(null);//add a null search string to fire the listen method '_performSearch' in mode to load next page.
+                    return Container(
+                      margin: EdgeInsets.all(10),
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    );
+                  }
+                  return SizedBox.shrink();
                 },
-                itemCount: snapshot.data.length,
+                itemCount: snapshot.data.length + 1,
             );
           }
           return Container();

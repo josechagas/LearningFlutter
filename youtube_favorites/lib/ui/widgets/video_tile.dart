@@ -37,8 +37,10 @@ class VideoTile extends StatelessWidget {
             ),
             trailing: IconButton(
               icon: Icon(
-                Icons.star_border
+                Icons.star_border,
               ),
+              color: Colors.white,
+              disabledColor: Colors.white54,
               onPressed: (){},
             ),
           ),
