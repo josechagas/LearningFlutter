@@ -5,7 +5,7 @@ import 'package:gifs_app/models/item_model.dart';
 import 'package:http/http.dart' as http;
 
 class GiphyApiProvider {
-  final _apiKey = "mubpJK4MBTVvfcmBp9mUMafCmJwAzfjr";
+  final _apiKey = "add your api key here";
 
   Future<GiphyApiResponse> loadTrending({int pageLimit = 20}) async {
     final url = "https://api.giphy.com/v1/gifs/trending?"
