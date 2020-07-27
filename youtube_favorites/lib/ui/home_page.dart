@@ -1,6 +1,7 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:youtube_favorites/blocs/favorite_bloc.dart';
 import 'package:youtube_favorites/blocs/videos_bloc.dart';
 import 'package:youtube_favorites/delegates/data_search.dart';
 import 'package:youtube_favorites/models/video.dart';
@@ -11,6 +12,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<VideosBloc>(context);
+    final favoritesBloc = BlocProvider.of<FavoriteBloc>(context);
     return Scaffold(
       backgroundColor: Colors.black87,
       appBar: AppBar(
@@ -23,8 +25,13 @@ class HomePage extends StatelessWidget {
         actions: <Widget>[
           Align(
             alignment: Alignment.center,
-            child: Text(
-              '0',
+            child: StreamBuilder<Map<String,Video>>(
+              stream: favoritesBloc.outFav,
+              builder: (context, snapshot){
+                return Text(
+                  '${snapshot.data?.length ?? 0}',
+                );
+              },
             ),
           ),
           IconButton(

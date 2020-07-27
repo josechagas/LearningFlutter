@@ -1,5 +1,6 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:youtube_favorites/blocs/favorite_bloc.dart';
 import 'package:youtube_favorites/blocs/videos_bloc.dart';
 import 'package:youtube_favorites/resources/youtube_api_provider.dart';
 import 'package:youtube_favorites/ui/home_page.dart';
@@ -23,13 +24,16 @@ class MyApp extends StatelessWidget {
 
     return BlocProvider(
       bloc: VideosBloc(),
-      child: MaterialApp(
-        title: 'FlutterTube',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
+      child: BlocProvider(
+        bloc: FavoriteBloc(),
+        child: MaterialApp(
+          title: 'FlutterTube',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          home: HomePage(),
         ),
-        home: HomePage(),
       ),
     );
   }
