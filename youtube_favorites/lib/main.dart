@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:youtube_favorites/blocs/favorite_bloc.dart';
 import 'package:youtube_favorites/blocs/videos_bloc.dart';
 import 'package:youtube_favorites/resources/youtube_api_provider.dart';
+import 'package:youtube_favorites/router.dart';
 import 'package:youtube_favorites/ui/home_page.dart';
 
 void mainDelegate() {
@@ -18,6 +19,7 @@ void mainDelegate() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+  final router = RootRouter();
   @override
   Widget build(BuildContext context) {
     YoutubeApiProvider().search('teste');
@@ -32,6 +34,7 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
+          onGenerateRoute: router.generateRoute,
           home: HomePage(),
         ),
       ),

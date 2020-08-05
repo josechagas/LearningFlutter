@@ -5,6 +5,7 @@ import 'package:youtube_favorites/blocs/favorite_bloc.dart';
 import 'package:youtube_favorites/blocs/videos_bloc.dart';
 import 'package:youtube_favorites/delegates/data_search.dart';
 import 'package:youtube_favorites/models/video.dart';
+import 'package:youtube_favorites/router.dart';
 import 'package:youtube_favorites/ui/load_info_widget.dart';
 import 'package:youtube_favorites/ui/widgets/video_tile.dart';
 
@@ -38,7 +39,9 @@ class HomePage extends StatelessWidget {
             icon: Icon(
               Icons.star,
             ),
-            onPressed: (){},
+            onPressed: (){
+              Navigator.of(context).pushNamed(RootRouter.favorites);
+            },
           ),
           IconButton(
             icon: Icon(
