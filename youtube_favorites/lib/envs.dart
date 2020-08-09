@@ -25,7 +25,7 @@ class _Config {
   static const YOUTUBE_API_KEY = 'YOUTUBE_API_KEY';
 
   static Map<String, dynamic> debugConstants = {
-    YOUTUBE_API_KEY: 'AIzaSyD4dMWpYuD4Me8HLDJJgeT-DhEJkLEsrGU',
+    YOUTUBE_API_KEY: 'Add youtube api here',
   };
 
   static Map<String, dynamic> prodConstants = {
