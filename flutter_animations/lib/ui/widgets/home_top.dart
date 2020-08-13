@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animations/ui/widgets/category_view.dart';
 
 class HomeTop extends StatelessWidget {
 
@@ -60,7 +61,8 @@ class HomeTop extends StatelessWidget {
                   ),
                 ),
               ),
-            )
+            ),
+            CategoryView()
           ],
         ),
       ),
