@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animations/ui/home_page.dart';
 import 'package:flutter_animations/ui/widgets/form_container.dart';
 import 'package:flutter_animations/ui/widgets/stagger_animation.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
@@ -19,6 +20,11 @@ class _LoginPageState extends State<LoginPage>  with SingleTickerProviderStateMi
         vsync: this,
       duration: Duration(seconds: 2),
     );
+    _animController.addStatusListener((status) {
+      if(status == AnimationStatus.completed) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>HomePage()));
+      }
+    });
     super.initState();
   }
 
