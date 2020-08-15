@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_loja_online/router.dart';
-import 'package:gerenciamento_loja_online/ui/login_page.dart';
+import 'package:gerenciamento_loja_online/ui/login_page/login_page.dart';
 
 void main() {
   runApp(MyApp());
