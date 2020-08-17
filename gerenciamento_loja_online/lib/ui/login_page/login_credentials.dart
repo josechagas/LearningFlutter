@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gerenciamento_loja_online/blocs/login_bloc.dart';
 import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
 

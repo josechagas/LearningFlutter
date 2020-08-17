@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gerenciamento_loja_online/blocs/login_bloc.dart';
 import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
+import 'package:gerenciamento_loja_online/router.dart';
 import 'package:gerenciamento_loja_online/ui/login_page/login_credentials.dart';
 
 class LoginPage extends StatefulWidget {
@@ -32,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     usernameController.dispose();
     passwordController.dispose();
+    bloc.dispose();
     super.dispose();
   }
 
@@ -52,8 +54,8 @@ class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.symmetric(vertical: 20, horizontal: calculateHorizontalPadding),
           child: BlocListener<LoginBloc,LoginBlocState>(
             cubit: bloc,
-            listenWhen: (prevousState, newState)=> newState.signInStatus != LoginStatus.none,
-            listener: _onBlocStateUpdate,
+            listenWhen: (previousState, newState)=> previousState.signInStatus != newState.signInStatus && newState.signInStatus != LoginStatus.none,
+            listener: _onBlocStateUpdateListener,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -122,24 +124,70 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _onBlocStateUpdate(BuildContext context, LoginBlocState state){
+  void _onBlocStateUpdateListener(BuildContext context, LoginBlocState state){
     switch(state.signInStatus) {
       case LoginStatus.performing:
         break;
+      case LoginStatus.successfull:
+        Navigator.of(context).pushReplacementNamed(RootRouter.homePage);
+        break;
       case LoginStatus.errorInvalidCredentials:
+        _showInvalidCredentialsAlert();
         break;
       case LoginStatus.errorVerifyConnection:
+        _showVerifyConnectionAlert();
+        break;
+      case LoginStatus.noPermissions:
+        _showNoPermissionAlert();
         break;
       default:
         break;
     }
-    print(state.signInStatus);
+    //print(state.signInStatus);
   }
 
   void onPerformSignInButtonPressed() {
     final username = usernameController.text;
     final password = passwordController.text;
-    print('credentials email: $username , password: $password');
     bloc.add(BlocEvent(LoginBlocEvents.performSignIn, data: {'email':username, 'password':password}));
+  }
+
+  void _showVerifyConnectionAlert(){
+    _showSignInFailedAlert(
+        'Verfique sua conexão com a internet!'
+    );
+  }
+
+  void _showInvalidCredentialsAlert(){
+    _showSignInFailedAlert(
+        'Usuário ou senha inválida!'
+    );
+  }
+
+  void _showNoPermissionAlert(){
+    _showSignInFailedAlert(
+        'Você não possui permissão de administrador!'
+    );
+  }
+
+  void _showSignInFailedAlert(String message){
+    showDialog(context: context, builder: (context){
+      return AlertDialog(
+        title: Text(
+            'Falha no Login'
+        ),
+        content: Text(
+          message,
+        ),
+        actions: [
+          FlatButton(
+            child: Text(
+                'OK'
+            ),
+            onPressed: ()=>Navigator.of(context).pop(),
+          )
+        ],
+      );
+    });
   }
 }
