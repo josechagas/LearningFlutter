@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gerenciamento_loja_online/blocs/clients_bloc.dart';
 import 'package:gerenciamento_loja_online/ui/clients_page/clients_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -21,11 +23,14 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final widget = pages[_selectedTab];
     return Scaffold(
-      body: Container(
-        color: Colors.grey[850],
-        alignment: Alignment.center,
-        child: SafeArea(
-          child: widget,
+      body: BlocProvider<ClientsBloc>(
+        create: (context) => ClientsBloc(ClientsBlocState()),
+        child: Container(
+          color: Colors.grey[850],
+          alignment: Alignment.center,
+          child: SafeArea(
+            child: widget,
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(

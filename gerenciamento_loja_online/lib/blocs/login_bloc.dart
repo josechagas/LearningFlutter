@@ -63,8 +63,10 @@ class LoginBloc extends Bloc<BlocEvent<LoginBlocEvents>, LoginBlocState> {
     }
   }
 
-  void dispose(){
+  @override
+  Future<void> close() {
     _authStreamSubscription.cancel();
+    return super.close();
   }
 
   Future<LoginStatus> _performLogin(String email, String password) async {

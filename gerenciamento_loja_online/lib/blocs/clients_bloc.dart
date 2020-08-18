@@ -8,12 +8,15 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
 
   ClientsBloc(ClientsBlocState initialState):super(initialState) {
     _addUsersListener();
+    add(BlocEvent(ClientsBlocEvent.loadClients));
   }
 
   StreamSubscription _usersListener;
 
-  void dispose(){
+  @override
+  Future<void> close() {
     _usersListener.cancel();
+    return super.close();
   }
 
   @override
@@ -21,8 +24,14 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
     switch(event.event) {
       case ClientsBlocEvent.searchBy:
         break;
-      case ClientsBlocEvent.udatesOnUsers:
+      case ClientsBlocEvent.updatesOnClients:
         yield _updateStateForChanges(event.data);
+        break;
+      case ClientsBlocEvent.loadClients:
+        var newState = ClientsBlocState.fromState(state);
+        newState.loadStatus = ClientsLoadStatus.loading;
+        yield newState;
+        yield await _loadClients();
         break;
       default:
         break;
@@ -31,7 +40,19 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
 
   void _addUsersListener(){
     _usersListener = Firestore.instance.collection('users').snapshots().listen((snapshot) {
-      add(BlocEvent(ClientsBlocEvent.updatesOnUsers, data: snapshot.documentChanges));
+      add(BlocEvent(ClientsBlocEvent.updatesOnClients, data: snapshot.documentChanges));
+    });
+  }
+
+  Future<ClientsBlocState> _loadClients() async {
+    var newState = ClientsBlocState.fromState(state);
+    return await Firestore.instance.collection('users').getDocuments().then((docs) {
+      newState.users = { for (var snapshot in docs.documents) snapshot.documentID : snapshot.data };
+      newState.loadStatus = ClientsLoadStatus.success;
+      return newState;
+    }).catchError((error){
+      newState.loadStatus = ClientsLoadStatus.failedToLoad;
+      return newState;
     });
   }
 
@@ -61,15 +82,24 @@ class ClientsBlocState {
   factory ClientsBlocState.fromState(ClientsBlocState state){
     final newState = ClientsBlocState();
     newState.users = state.users;
+    newState.loadStatus = state.loadStatus;
     return newState;
   }
 
   Map<String, Map<String, dynamic>> users = {};
-
   List<Map<String, dynamic>> get usersList => users.values.toList();
+  ClientsLoadStatus loadStatus = ClientsLoadStatus.none;
 }
 
 enum ClientsBlocEvent {
   searchBy,
-  updatesOnUsers
+  updatesOnClients,
+  loadClients
+}
+
+enum ClientsLoadStatus {
+  loading,
+  none,
+  success,
+  failedToLoad
 }
