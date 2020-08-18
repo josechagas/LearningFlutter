@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Container(
           width: windowSize.width,
           height: windowSize.height,
-          color: Colors.black54,
+          color: Colors.grey[850],
           padding: EdgeInsets.symmetric(vertical: 20, horizontal: calculateHorizontalPadding),
           child: BlocListener<LoginBloc,LoginBlocState>(
             cubit: bloc,
