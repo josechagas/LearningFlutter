@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gerenciamento_loja_online/blocs/clients_bloc.dart';
 import 'package:gerenciamento_loja_online/ui/clients_page/clients_page.dart';
+import 'package:gerenciamento_loja_online/ui/orders_page/orders_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -76,9 +77,7 @@ class _HomePageState extends State<HomePage> {
 
   void _buildPagesWidgets(){
     pages.add(ClientsPage());
-    pages.add(Text(
-      'Selected Tab: 2',
-    ));
+    pages.add(OrdersPage());
     pages.add(Text(
       'Selected Tab: 3',
     ));

@@ -23,6 +23,7 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
   Stream<ClientsBlocState> mapEventToState(BlocEvent<ClientsBlocEvent> event) async* {
     switch(event.event) {
       case ClientsBlocEvent.searchBy:
+        yield await _searchClientsBy(event.data);
         break;
       case ClientsBlocEvent.updatesOnClients:
         yield _updateStateForChanges(event.data);
@@ -42,6 +43,18 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
     _usersListener = Firestore.instance.collection('users').snapshots().listen((snapshot) {
       add(BlocEvent(ClientsBlocEvent.updatesOnClients, data: snapshot.documentChanges));
     });
+  }
+
+  Future<ClientsBlocState> _searchClientsBy(String searchString) async {
+    if(searchString.trim().isEmpty) {
+      return _loadClients();
+    }
+    else {
+      var newState = ClientsBlocState.fromState(state);
+      newState.users.removeWhere((key, value) => !value['name'].toUpperCase().contains(searchString.toUpperCase()));
+      newState.loadStatus = ClientsLoadStatus.success;
+      return newState;
+    }
   }
 
   Future<ClientsBlocState> _loadClients() async {

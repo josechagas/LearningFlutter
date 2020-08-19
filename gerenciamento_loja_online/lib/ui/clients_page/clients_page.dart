@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gerenciamento_loja_online/blocs/clients_bloc.dart';
+import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
 import 'package:gerenciamento_loja_online/ui/clients_page/client_tile.dart';
 
 class ClientsPage extends StatelessWidget {
@@ -25,7 +26,9 @@ class ClientsPage extends StatelessWidget {
                   Icons.search,
                   color: Colors.white,
                 ),
-                border: InputBorder.none),
+                border: InputBorder.none,
+            ),
+            onChanged: (value)=>bloc.add(BlocEvent(ClientsBlocEvent.searchBy, data: value)),
           ),
         ),
         Expanded(
