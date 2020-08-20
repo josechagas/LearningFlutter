@@ -35,7 +35,15 @@ class OrdersBloc extends Bloc<BlocEvent<OrdersBlocEvents>, OrdersBlocState> {
 
   Future<OrdersBlocState> _loadOrders() async {
     final newState = OrdersBlocState.fromState(state);
-    return newState;
+    return await Firestore.instance.collection('orders').getDocuments().then((data) {
+      newState.orders = data.documents;
+      newState.loadStatus = OrdersLoadStatus.success;
+      return newState;
+    }).catchError((error){
+      newState.loadStatus = OrdersLoadStatus.failed;
+      newState.orders = [];
+      return newState;
+    });
   }
 
   OrdersBlocState _updateStateForChanges(List<DocumentChange> changes) {
@@ -57,6 +65,7 @@ class OrdersBloc extends Bloc<BlocEvent<OrdersBlocEvents>, OrdersBlocState> {
           break;
       }
     });
+    newState.loadStatus = OrdersLoadStatus.success;
     return newState;
   }
 

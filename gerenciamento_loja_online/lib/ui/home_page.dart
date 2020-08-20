@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     final widget = pages[_selectedTab];
     return Scaffold(
       body: BlocProvider<ClientsBloc>(
-        create: (context) => ClientsBloc(ClientsBlocState()),
+        create: (context) => ClientsBloc(ClientsBlocState.loadUsers()),
         child: Container(
           color: Colors.grey[850],
           alignment: Alignment.center,

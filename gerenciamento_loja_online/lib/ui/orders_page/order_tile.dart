@@ -1,6 +1,26 @@
+import 'dart:collection';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class OrderTile extends StatelessWidget {
+
+  OrderTile({@required this.order, Key key}):super(key: key);
+
+  final DocumentSnapshot order;
+
+  String get orderCode => order.documentID.substring(order.documentID.length - 7);
+  int get status => order.data['status'];
+  String get stateString => states[status];
+
+  final states = [
+    '',
+    'Em preparação',
+    'Em transporte',
+    'Aguardando entrega',
+    'Entregue'
+  ];
+
   @override
   Widget build(BuildContext context) {
     final defaultSpacer = const SizedBox(
@@ -12,9 +32,9 @@ class OrderTile extends StatelessWidget {
         child: ExpansionTile(
           childrenPadding: EdgeInsets.only(left: 16, top: 0, right: 16, bottom: 8),
           title: Text(
-            '#12312312 - Entregue',
+            '#$orderCode - $stateString',
             style: TextStyle(
-              color: Colors.green,
+              color: status != 4/*entregue*/ ? Colors.grey[850] : Colors.green,
             ),
           ),
           children: [
@@ -40,27 +60,32 @@ class OrderTile extends StatelessWidget {
   }
 
   Widget _buildOrderItemsList(BuildContext context) {
+    final List products = order.data['products'];
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildOrderItem(context),
-        _buildOrderItem(context),
-        _buildOrderItem(context),
-      ],
+      children: products.map((item){
+        final map = Map<String, dynamic>.from(item);
+        return _buildOrderItem(context, map);
+      }).toList(),
     );
   }
 
-  Widget _buildOrderItem(BuildContext context) {
+  Widget _buildOrderItem(BuildContext context, Map<String,dynamic> data) {
+    final title = data['product']['title'];
+    final size = data['size'];
+    final category = data['category'];
+    final prodCode = data['pId'];
+    final quant = data['quantity'];
     return ListTile(
       contentPadding: EdgeInsets.zero,
       title: Text(
-        'Nome do produto',
+          '$title $size',
       ),
       subtitle: Text(
-          'categoria/cod produto',
+          '$category/$prodCode',
       ),
       trailing: Text(
-        '2'
+        '$quant'
       ),
     );
   }

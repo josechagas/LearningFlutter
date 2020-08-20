@@ -8,7 +8,6 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
 
   ClientsBloc(ClientsBlocState initialState):super(initialState) {
     _addUsersListener();
-    add(BlocEvent(ClientsBlocEvent.loadClients));
   }
 
   StreamSubscription _usersListener;
@@ -27,12 +26,6 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
         break;
       case ClientsBlocEvent.updatesOnClients:
         yield _updateStateForChanges(event.data);
-        break;
-      case ClientsBlocEvent.loadClients:
-        var newState = ClientsBlocState.fromState(state);
-        newState.loadStatus = ClientsLoadStatus.loading;
-        yield newState;
-        yield await _loadClients();
         break;
       default:
         break;
@@ -85,12 +78,19 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
           break;
       }
     });
+    newState.loadStatus = ClientsLoadStatus.success;
     return newState;
   }
 }
 
 class ClientsBlocState {
   ClientsBlocState();
+
+  factory ClientsBlocState.loadUsers() {
+    final newState = ClientsBlocState();
+    newState.loadStatus = ClientsLoadStatus.loading;
+    return newState;
+  }
 
   factory ClientsBlocState.fromState(ClientsBlocState state){
     final newState = ClientsBlocState();
