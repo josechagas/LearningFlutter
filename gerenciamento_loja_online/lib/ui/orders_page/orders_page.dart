@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:gerenciamento_loja_online/blocs/clients_bloc.dart';
 import 'package:gerenciamento_loja_online/blocs/orders_bloc.dart';
 import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
 import 'package:gerenciamento_loja_online/ui/orders_page/order_tile.dart';
@@ -15,6 +16,8 @@ class OrdersPage extends StatelessWidget {
       child: BlocBuilder<OrdersBloc, OrdersBlocState>(
         cubit: bloc,
         builder: (context, state){
+          final clientsBloc = BlocProvider.of<ClientsBloc>(context);
+
           switch(state.loadStatus) {
             case OrdersLoadStatus.loading:
               return Center(
@@ -39,7 +42,7 @@ class OrdersPage extends StatelessWidget {
                 );
               }
               else {
-                return _buildOrdersList(state);
+                return _buildOrdersList(state,clientsBloc.state);
               }
               break;
             default:
@@ -76,12 +79,13 @@ class OrdersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildOrdersList(OrdersBlocState state){
+  Widget _buildOrdersList(OrdersBlocState state, ClientsBlocState clientsState){
     return ListView.builder(
       itemCount: state.orders.length,
       itemBuilder: (context, index) {
         return OrderTile(
           order: state.orders[index],
+          clientsBlocState: clientsState,
         );
       },
     );
