@@ -39,6 +39,7 @@ class OrderTile extends StatelessWidget {
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Card(
         child: ExpansionTile(
+          initiallyExpanded: status != 4,
           childrenPadding:
               EdgeInsets.only(left: 16, top: 0, right: 16, bottom: 8),
           title: Text(
