@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_loja_online/ui/home_page.dart';
+import 'package:gerenciamento_loja_online/ui/product_page.dart';
+import 'package:gerenciamento_loja_online/ui/products_page/products_page.dart';
 
 abstract class Router{
   Route<dynamic> generateRoute(RouteSettings settings);
@@ -7,8 +9,7 @@ abstract class Router{
 
 class RootRouter implements Router {
   static const homePage = '/homePage';
-  static const loginPage = '/loginPage';
-  static const registerPage = '/registerPage';
+  static const productPage = '/productPage';
 
   @override
   Route<dynamic> generateRoute(RouteSettings settings) {
@@ -17,12 +18,10 @@ class RootRouter implements Router {
       case homePage:
         builder = (BuildContext _) => HomePage();
         break;
-      /*case loginPage:
-        builder = (BuildContext _) => LoginPage();
+      case productPage:
+        final dict = settings.arguments as Map<String,dynamic>;
+        builder = (BuildContext _) => ProductPage(categoryId: dict['categoryId'],product: dict['product'],);
         break;
-      case registerPage:
-        builder = (BuildContext _) => RegisterPage();
-        break;*/
       default:
         throw Exception('RootRouter - Invalid route: ${settings.name}');
     }

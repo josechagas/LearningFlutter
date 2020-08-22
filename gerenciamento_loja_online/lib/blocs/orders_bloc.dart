@@ -11,6 +11,7 @@ class OrdersBloc extends Bloc<BlocEvent<OrdersBlocEvents>, OrdersBlocState> {
 
   StreamSubscription _ordersListener;
 
+
   @override
   Stream<OrdersBlocState> mapEventToState(
       BlocEvent<OrdersBlocEvents> event) async* {
@@ -20,6 +21,11 @@ class OrdersBloc extends Bloc<BlocEvent<OrdersBlocEvents>, OrdersBlocState> {
         newState.loadStatus = OrdersLoadStatus.loading;
         yield newState;
         yield await _loadOrders();
+        break;
+      case OrdersBlocEvents.orderBy:
+        final newState = OrdersBlocState.fromState(state);
+        newState.sortOrdersBy(event.data ?? SortCriteria.readyFirst);
+        yield newState;
         break;
       case OrdersBlocEvents.updatesOnOrders:
         yield _updateStateForChanges(event.data);
@@ -38,6 +44,7 @@ class OrdersBloc extends Bloc<BlocEvent<OrdersBlocEvents>, OrdersBlocState> {
     return await Firestore.instance.collection('orders').getDocuments().then((data) {
       newState.orders = data.documents;
       newState.loadStatus = OrdersLoadStatus.success;
+      newState.sortOrdersByCurrentCriteria();
       return newState;
     }).catchError((error){
       newState.loadStatus = OrdersLoadStatus.failed;
@@ -66,8 +73,11 @@ class OrdersBloc extends Bloc<BlocEvent<OrdersBlocEvents>, OrdersBlocState> {
       }
     });
     newState.loadStatus = OrdersLoadStatus.success;
+    newState.sortOrdersByCurrentCriteria();
     return newState;
   }
+
+
 
   void _addOrdersListener() {
     _ordersListener =
@@ -78,7 +88,7 @@ class OrdersBloc extends Bloc<BlocEvent<OrdersBlocEvents>, OrdersBlocState> {
   }
 }
 
-enum OrdersBlocEvents { loadOrders, updatesOnOrders }
+enum OrdersBlocEvents { loadOrders, updatesOnOrders, orderBy }
 
 class OrdersBlocState {
   OrdersBlocState();
@@ -95,6 +105,28 @@ class OrdersBlocState {
 
   List<DocumentSnapshot> orders = [];
   OrdersLoadStatus loadStatus = OrdersLoadStatus.none;
+  SortCriteria criteria = SortCriteria.readyFirst;
+
+  void sortOrdersBy(SortCriteria criteria) {
+    this.criteria = criteria;
+    orders.sort((a,b){
+      int statusA = a.data['status'];
+      int statusB = b.data['status'];
+      if(statusA < statusB){
+        return criteria == SortCriteria.readyFirst ? 1 : -1;
+      }
+      else if(statusA > statusB){
+        return criteria == SortCriteria.readyFirst ? -1 : 1;
+      }
+      return 0;
+    });
+  }
+
+  void sortOrdersByCurrentCriteria() {
+    sortOrdersBy(criteria);
+  }
 }
 
 enum OrdersLoadStatus { none, loading, success, failed }
+
+enum SortCriteria {readyFirst, readyLast}

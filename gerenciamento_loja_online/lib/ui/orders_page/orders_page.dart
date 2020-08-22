@@ -7,10 +7,9 @@ import 'package:gerenciamento_loja_online/ui/orders_page/order_tile.dart';
 
 class OrdersPage extends StatelessWidget {
 
-  final bloc = OrdersBloc(OrdersBlocState.loadOrders());
-
   @override
   Widget build(BuildContext context) {
+    final bloc = BlocProvider.of<OrdersBloc>(context);
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 16),
       child: BlocBuilder<OrdersBloc, OrdersBlocState>(
@@ -28,7 +27,7 @@ class OrdersPage extends StatelessWidget {
                 ),
               );
             case OrdersLoadStatus.failed:
-              return _buildFailedToLoad(context);
+              return _buildFailedToLoad(context, bloc);
             case OrdersLoadStatus.success:
               if(state.orders.isEmpty) {
                 return Center(
@@ -54,7 +53,7 @@ class OrdersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFailedToLoad(BuildContext context){
+  Widget _buildFailedToLoad(BuildContext context, OrdersBloc bloc){
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
