@@ -7,15 +7,12 @@ class ProductsPage extends StatefulWidget {
   _ProductsPageState createState() => _ProductsPageState();
 }
 
-class _ProductsPageState extends State<ProductsPage> with AutomaticKeepAliveClientMixin<ProductsPage> {
-
-
+class _ProductsPageState extends State<ProductsPage> {
 
   Future<QuerySnapshot> categoriesFuture = Firestore.instance.collection('products').getDocuments();
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return FutureBuilder<QuerySnapshot>(
       future: categoriesFuture,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
@@ -56,7 +53,4 @@ class _ProductsPageState extends State<ProductsPage> with AutomaticKeepAliveClie
   Widget _buildCategoryItem(BuildContext context, DocumentSnapshot item){
     return CategoryTile(category: item,);
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
