@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gerenciamento_loja_online/ui/home_page.dart';
-import 'package:gerenciamento_loja_online/ui/product_page.dart';
+import 'package:gerenciamento_loja_online/ui/product_page/product_page.dart';
 import 'package:gerenciamento_loja_online/ui/products_page/products_page.dart';
 
 abstract class Router{

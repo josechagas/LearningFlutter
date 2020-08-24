@@ -15,15 +15,32 @@ class ProductBloc extends Bloc<BlocEvent<ProductBlocEvent>,ProductBlocState> {
 }
 
 enum ProductBlocEvent {
-  save
+  save,
+  delete
 }
 
 class ProductBlocState {
-  ProductBlocState({this.categoryId, this.product});
-  String categoryId;
-  DocumentSnapshot product;
-  ProductPageMode get mode => product == null ? ProductPageMode.newProd : ProductPageMode.editProd;
+  ProductBlocState({this.categoryId, this.product}) {
+    sizesList = List.from(prodMap['sizes'] ?? []);
+    imagesList = List.from(prodMap['images'] ?? []);
+  }
 
+  String categoryId;
+
+  DocumentSnapshot product;
+  Map<String,dynamic> get prodMap => product != null ? Map.of(product.data) : {};
+
+  List<String> imagesList;
+  List<String> sizesList;
+
+  String get title => prodMap['title'];
+  String get description => prodMap['description'];
+  double get price {
+    final value = prodMap['price'] ?? 0;
+    return value/100.0;
+  }
+
+  ProductPageMode get mode => product == null ? ProductPageMode.newProd : ProductPageMode.editProd;
   ProductSaveStatus saveStatus = ProductSaveStatus.none;
 }
 
