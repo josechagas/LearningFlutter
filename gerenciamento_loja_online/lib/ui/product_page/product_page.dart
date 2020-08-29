@@ -32,10 +32,10 @@ class _ProductPageState extends State<ProductPage> {
 
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  final GlobalKey<FormFieldState> _imagesFormFieldKey = GlobalKey();
   TextEditingController _titleController;
   TextEditingController _descriptionController;
   TextEditingController _priceController;
-  final GlobalKey<FormFieldState> _priceController;
 
   @override
   void initState() {
@@ -81,15 +81,20 @@ class _ProductPageState extends State<ProductPage> {
         actions: [
           BlocBuilder<ProductBloc, ProductBlocState>(
             cubit: _bloc,
-            buildWhen: (oldState, newState) => oldState.mode != newState.mode,
+            buildWhen: (oldState, newState) =>
+                oldState.mode != newState.mode ||
+                oldState.updateStatus != newState.updateStatus,
             builder: (context, state) {
               return Visibility(
-                visible: state.mode == ProductPageMode.editProd,
+                visible: state.mode == ProductPageMode.editProd &&
+                    state.updateStatus != ProductUpdateStatus.deleting,
                 child: IconButton(
                   icon: Icon(
                     Icons.delete,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    _bloc.add(BlocEvent(ProductBlocEvent.delete));
+                  },
                 ),
               );
             },
@@ -97,9 +102,10 @@ class _ProductPageState extends State<ProductPage> {
           BlocBuilder<ProductBloc, ProductBlocState>(
             cubit: _bloc,
             buildWhen: (oldState, newState) =>
-                oldState.saveStatus != newState.saveStatus,
+                oldState.updateStatus != newState.updateStatus,
             builder: (BuildContext context, ProductBlocState state) {
-              return state.saveStatus == ProductSaveStatus.saving
+              return state.updateStatus == ProductUpdateStatus.saving ||
+                      state.updateStatus == ProductUpdateStatus.deleting
                   ? Center(
                       child: Container(
                         width: 20,
@@ -124,7 +130,7 @@ class _ProductPageState extends State<ProductPage> {
       body: BlocListener<ProductBloc, ProductBlocState>(
         cubit: _bloc,
         listenWhen: (oldState, newState) =>
-            newState.saveStatus != ProductSaveStatus.none,
+            newState.updateStatus != ProductUpdateStatus.none,
         listener: onBlocStateUpdateListener,
         child: Form(
           key: _formKey,
@@ -142,6 +148,7 @@ class _ProductPageState extends State<ProductPage> {
                 cubit: _bloc,
                 builder: (context, state) {
                   return ImagesWidgets(
+                    key: _imagesFormFieldKey,
                     context: context,
                     initialValue: state.imagesList,
                     onSaved: (images) {},
@@ -195,8 +202,8 @@ class _ProductPageState extends State<ProductPage> {
   void onBlocStateUpdateListener(BuildContext context, ProductBlocState state) {
     Widget content;
     SnackBarAction action;
-    switch (state.saveStatus) {
-      case ProductSaveStatus.saving:
+    switch (state.updateStatus) {
+      case ProductUpdateStatus.saving:
         content = Text(
           state.mode == ProductPageMode.editProd
               ? 'Salvando Alterações ...'
@@ -206,7 +213,15 @@ class _ProductPageState extends State<ProductPage> {
           ),
         );
         break;
-      case ProductSaveStatus.success:
+      case ProductUpdateStatus.deleting:
+        content = Text(
+          'Excluindo Produto ...',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        );
+        break;
+      case ProductUpdateStatus.successSaving:
         content = Text(
           state.mode == ProductPageMode.editProd
               ? 'Alterações salvas com sucesso!'
@@ -216,7 +231,15 @@ class _ProductPageState extends State<ProductPage> {
           ),
         );
         break;
-      case ProductSaveStatus.failed:
+      case ProductUpdateStatus.successDeleting:
+        content = Text(
+          'Produto excluido com sucesso!',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        );
+        break;
+      case ProductUpdateStatus.failedSaving:
         content = Text(
           state.mode == ProductPageMode.editProd
               ? 'Falha em salvar Alterações!'
@@ -226,12 +249,21 @@ class _ProductPageState extends State<ProductPage> {
           ),
         );
         break;
+      case ProductUpdateStatus.failedDeleting:
+        content = Text(
+          'Falha em excluir Produto!',
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        );
+        break;
       default:
         break;
     }
 
-    if(content != null) {
-      _scaffoldKey.currentState.removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
+    if (content != null) {
+      _scaffoldKey.currentState
+          .removeCurrentSnackBar(reason: SnackBarClosedReason.dismiss);
       _scaffoldKey.currentState.showSnackBar(SnackBar(
         backgroundColor: Theme.of(context).primaryColor,
         content: content,
@@ -239,6 +271,12 @@ class _ProductPageState extends State<ProductPage> {
         duration: Duration(
           seconds: 2,
         ),
+        onVisible: () {
+          if(state.updateStatus == ProductUpdateStatus.successDeleting) {
+            Future.delayed(Duration(seconds: 2))
+                .whenComplete(() => Navigator.of(context).pop());
+          }
+        },
       ));
     }
   }
@@ -278,6 +316,7 @@ class _ProductPageState extends State<ProductPage> {
         'description': _descriptionController.text,
         'price': NumberFormat.simpleCurrency()
             .parse(_priceController.text), //centavos
+        'images': _imagesFormFieldKey.currentState.value
       };
       _bloc.add(BlocEvent(ProductBlocEvent.save, data: dataMap));
     } else {}

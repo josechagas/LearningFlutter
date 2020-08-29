@@ -10,7 +10,9 @@ class ImagesWidgets extends FormField<List> {
     FormFieldValidator<List> validator,
     List<dynamic> initialValue,
     bool autoValidate = false,
+    Key key,
 }) : super(
+    key: key,
     onSaved: onSaved,
     initialValue: List<dynamic>.from(initialValue),
     validator: validator,
