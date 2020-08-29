@@ -17,6 +17,7 @@ class ImagesWidgets extends FormField<List> {
     autovalidate: autoValidate,
     builder: (state){
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 124,
@@ -58,9 +59,8 @@ class ImagesWidgets extends FormField<List> {
           ),
           state.hasError ? Text(
             state.errorText,
-            style: TextStyle(
-              color: Colors.redAccent,
-              fontSize: 12,
+            style: Theme.of(context).textTheme.caption.copyWith(
+              color: Theme.of(context).errorColor,
             ),
           ) : SizedBox.shrink(),
         ],

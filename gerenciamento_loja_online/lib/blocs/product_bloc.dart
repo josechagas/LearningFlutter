@@ -3,14 +3,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
 
 class ProductBloc extends Bloc<BlocEvent<ProductBlocEvent>,ProductBlocState> {
-
-
   ProductBloc(ProductBlocState initialState) : super(initialState);
 
   @override
   Stream<ProductBlocState> mapEventToState(BlocEvent<ProductBlocEvent> event) async* {
-    // TODO: implement mapEventToState
-    yield state;
+    switch(event.event) {
+      case ProductBlocEvent.save:
+        final newState = ProductBlocState.fromState(state);
+        newState.saveStatus = ProductSaveStatus.saving;
+        yield newState;
+        yield await _saveChanges(event.data);
+        break;
+      case ProductBlocEvent.delete:
+        break;
+      default:
+        break;
+    }
+  }
+
+  Future<ProductBlocState> _saveChanges(Map<String,dynamic> data) async {
+    data['price'] *= 100.0;
+    final newState = ProductBlocState.fromState(state);
+    newState.saveStatus = ProductSaveStatus.success;
+    await Future.delayed(Duration(seconds: 5));
+    return newState;
+  }
+
+  Future<void> _uploadImages() async {
+    final String docId = state.product.documentID;
+    state.imagesList.
   }
 }
 
@@ -24,6 +45,11 @@ class ProductBlocState {
     sizesList = List.from(prodMap['sizes'] ?? []);
     imagesList = List.from(prodMap['images'] ?? []);
   }
+
+  factory ProductBlocState.fromState(ProductBlocState state) => ProductBlocState(
+    product: state.product,
+    categoryId: state.categoryId,
+  );
 
   String categoryId;
 
