@@ -39,7 +39,8 @@ class ProductBloc extends Bloc<BlocEvent<ProductBlocEvent>, ProductBlocState> {
   }
 
   Future<ProductBlocState> _saveChanges(Map<String, dynamic> data) async {
-    data['price'] = data['price']*100 as int;
+    double price = data['price'];
+    data['price'] = (price*100).round();
     final newState = ProductBlocState.fromState(state);
     try {
       if (state.mode == ProductPageMode.editProd) {
@@ -47,7 +48,7 @@ class ProductBloc extends Bloc<BlocEvent<ProductBlocEvent>, ProductBlocState> {
             newState.product.documentID); //need reference to product.
         data['images'] =
             imagesUrls; //update the value to keep only the urls of uploaded images, removing references to local files.
-        await state.product.reference.updateData(data);
+        await newState.product.reference.updateData(data);
       } else {
         final List images = data['images'];
         DocumentReference newProdReference = await Firestore.instance

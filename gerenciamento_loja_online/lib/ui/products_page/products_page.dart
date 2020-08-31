@@ -9,7 +9,7 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
 
-  Future<QuerySnapshot> categoriesFuture = Firestore.instance.collection('products').getDocuments();
+  Future<QuerySnapshot> categoriesFuture = Firestore.instance.collection('products').getDocuments();//to update it every time move it to build method.
 
   @override
   Widget build(BuildContext context) {

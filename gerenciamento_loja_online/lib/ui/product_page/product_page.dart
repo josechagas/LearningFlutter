@@ -7,6 +7,7 @@ import 'package:gerenciamento_loja_online/blocs/product_bloc.dart';
 import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
 import 'package:gerenciamento_loja_online/helpers/format_helper.dart';
 import 'package:gerenciamento_loja_online/ui/product_page/images_widget.dart';
+import 'package:gerenciamento_loja_online/ui/product_page/product_sizes.dart';
 import 'package:gerenciamento_loja_online/ui/product_page/product_validators.dart';
 import 'package:intl/intl.dart';
 
@@ -182,7 +183,29 @@ class _ProductPageState extends State<ProductPage> {
                 keyboardType: TextInputType.numberWithOptions(),
                 onSaved: (newValue) {},
                 validator: validatePrice,
-              )
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Text(
+                'Tamanhos',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 12,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              BlocBuilder<ProductBloc, ProductBlocState> (
+                cubit: _bloc,
+                builder: (context, state){
+                  return ProductSizes(
+                    context: context,
+                    initialValue: state.sizesList,
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -200,6 +223,9 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void onBlocStateUpdateListener(BuildContext context, ProductBlocState state) {
+    final textStyle = TextStyle(
+      color: Colors.white,
+    );
     Widget content;
     SnackBarAction action;
     switch (state.updateStatus) {
@@ -208,17 +234,13 @@ class _ProductPageState extends State<ProductPage> {
           state.mode == ProductPageMode.editProd
               ? 'Salvando Alterações ...'
               : 'Salvando Produto ...',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: textStyle,
         );
         break;
       case ProductUpdateStatus.deleting:
         content = Text(
           'Excluindo Produto ...',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: textStyle,
         );
         break;
       case ProductUpdateStatus.successSaving:
@@ -226,17 +248,13 @@ class _ProductPageState extends State<ProductPage> {
           state.mode == ProductPageMode.editProd
               ? 'Alterações salvas com sucesso!'
               : 'Produto salvo com sucesso!',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: textStyle,
         );
         break;
       case ProductUpdateStatus.successDeleting:
         content = Text(
           'Produto excluido com sucesso!',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: textStyle,
         );
         break;
       case ProductUpdateStatus.failedSaving:
@@ -244,17 +262,13 @@ class _ProductPageState extends State<ProductPage> {
           state.mode == ProductPageMode.editProd
               ? 'Falha em salvar Alterações!'
               : 'Falha em salvar novo Produto!',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: textStyle,
         );
         break;
       case ProductUpdateStatus.failedDeleting:
         content = Text(
           'Falha em excluir Produto!',
-          style: TextStyle(
-            color: Colors.white,
-          ),
+          style: textStyle,
         );
         break;
       default:
