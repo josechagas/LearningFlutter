@@ -15,6 +15,6 @@ class ProductValidator {
     }
   }
   bool validateImages(List images) => images != null && images.isNotEmpty;
-
+  bool validateSizes(List sizes) => sizes != null && sizes.isNotEmpty;
 
 }

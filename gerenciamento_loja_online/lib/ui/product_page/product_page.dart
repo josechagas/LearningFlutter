@@ -34,6 +34,7 @@ class _ProductPageState extends State<ProductPage> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   final GlobalKey<FormFieldState> _imagesFormFieldKey = GlobalKey();
+  final GlobalKey<FormFieldState> _sizesFormFieldKey = GlobalKey();
   TextEditingController _titleController;
   TextEditingController _descriptionController;
   TextEditingController _priceController;
@@ -201,8 +202,10 @@ class _ProductPageState extends State<ProductPage> {
                 cubit: _bloc,
                 builder: (context, state){
                   return ProductSizes(
+                    key: _sizesFormFieldKey,
                     context: context,
                     initialValue: state.sizesList,
+                    validator: validateSizes,
                   );
                 },
               ),
@@ -323,6 +326,12 @@ class _ProductPageState extends State<ProductPage> {
     return 'Adicione ao menos uma imagem ao produto.';
   }
 
+  String validateSizes(List sizes) {
+    if (productValidator.validateSizes(sizes)) {
+      return null;
+    }
+    return 'Adicione ao menos um tamanho disponivel para o produto.';
+  }
   void saveChanges() {
     if (_formKey.currentState.validate()) {
       final dataMap = {
@@ -330,7 +339,8 @@ class _ProductPageState extends State<ProductPage> {
         'description': _descriptionController.text,
         'price': NumberFormat.simpleCurrency()
             .parse(_priceController.text), //centavos
-        'images': _imagesFormFieldKey.currentState.value
+        'images': _imagesFormFieldKey.currentState.value,
+        'sizes': _sizesFormFieldKey.currentState.value,
       };
       _bloc.add(BlocEvent(ProductBlocEvent.save, data: dataMap));
     } else {}

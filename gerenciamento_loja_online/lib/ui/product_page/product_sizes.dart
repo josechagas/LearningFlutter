@@ -1,26 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:gerenciamento_loja_online/ui/product_page/add_size_dialog.dart';
 
 class ProductSizes extends FormField<List<String>> {
   ProductSizes({
+    Key key,
     BuildContext context,
     List<String> initialValue,
     FormFieldSetter<List<String>> onSaved,
     FormFieldValidator<List<String>> validator,
   }) : super(
+          key: key,
           builder: (state) {
-            return Wrap(
-              alignment: WrapAlignment.start,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              direction: Axis.horizontal,
-              runAlignment: WrapAlignment.start,
-              runSpacing: 0,
-              spacing: 10,
-              children: state.value
-                  .map<Widget>((size) => _buildSizeButton(context, size, state)).toList()
-                    ..insert(
-                      0,
-                        _buildAddSizeButton(context, state)
-                    ),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Wrap(
+                  alignment: WrapAlignment.start,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  direction: Axis.horizontal,
+                  runAlignment: WrapAlignment.start,
+                  runSpacing: 0,
+                  spacing: 10,
+                  children: state.value
+                      .map<Widget>(
+                          (size) => _buildSizeButton(context, size, state))
+                      .toList()
+                        ..insert(0, _buildAddSizeButton(context, state)),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                state.hasError
+                    ? Text(state.errorText,
+                        style: Theme.of(context).textTheme.caption.copyWith(
+                              color: Theme.of(context).errorColor,
+                            ))
+                    : SizedBox.shrink(),
+              ],
             );
           },
           initialValue: initialValue,
@@ -29,10 +47,10 @@ class ProductSizes extends FormField<List<String>> {
         );
 
   static Widget _buildSizeButton(
-      BuildContext context,
-      String size,
-      FormFieldState<List<String>> state,
-      ) {
+    BuildContext context,
+    String size,
+    FormFieldState<List<String>> state,
+  ) {
     return SizedBox(
       width: 60,
       child: MaterialButton(
@@ -45,22 +63,26 @@ class ProductSizes extends FormField<List<String>> {
                 style: BorderStyle.solid)),
         child: Text(
           size,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        onLongPress: ()=> _onSizeTapped(size, state),
+        onPressed: () {},
+        onLongPress: () => _onSizeTapped(size, state),
       ),
     );
   }
 
   static Widget _buildAddSizeButton(
-      BuildContext context,
-      FormFieldState<List<String>> state,
-      ) {
+    BuildContext context,
+    FormFieldState<List<String>> state,
+  ) {
     return SizedBox(
       width: 60,
       child: RaisedButton(
         color: Theme.of(context).primaryColor,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(5),
         ),
         child: Icon(
           Icons.add,
@@ -75,7 +97,15 @@ class ProductSizes extends FormField<List<String>> {
     state.didChange(state.value..remove(size));
   }
 
-  static void _onAddSizeTapped(BuildContext context, FormFieldState<List<String>> state) {
-
+  static void _onAddSizeTapped(
+      BuildContext context, FormFieldState<List<String>> state) async {
+    String size = await showDialog(
+        context: context,
+        builder: (context) {
+          return AddSizeDialog();
+        });
+    if (size != null) {
+      state.didChange(state.value..add(size));
+    }
   }
 }
