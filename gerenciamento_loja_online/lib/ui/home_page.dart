@@ -7,6 +7,7 @@ import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
 import 'package:gerenciamento_loja_online/ui/clients_page/clients_page.dart';
 import 'package:gerenciamento_loja_online/ui/orders_page/orders_page.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:gerenciamento_loja_online/ui/products_page/edit_category_dialog.dart';
 import 'package:gerenciamento_loja_online/ui/products_page/products_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -125,6 +126,16 @@ class _HomePageState extends State<HomePage> {
         );
         break;
       case 2:
+        return FloatingActionButton(
+          child: Icon(
+            Icons.add,
+          ),
+          onPressed: () {
+            showDialog(context: context, builder:(context){
+              return EditCategoryDialog(category: null,);
+            });
+          },
+        );
       default:
         break;
     }

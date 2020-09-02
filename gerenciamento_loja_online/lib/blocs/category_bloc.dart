@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
@@ -34,8 +36,10 @@ class CategoryBlocState {
   );
 
   DocumentSnapshot category;
-  String get title => category.data['title'];
-  String get icon => category.data['icon'];
+
+  String get title => category?.data != null ? category?.data['title'] : null;
+  String get iconUrl => category?.data != null ? category?.data['icon'] : null;
+  File iconFile;
   CategoryBlocMode get mode => category != null ? CategoryBlocMode.edit : CategoryBlocMode.create;
 
   CategoryUpdateStatus updateStatus = CategoryUpdateStatus.none;

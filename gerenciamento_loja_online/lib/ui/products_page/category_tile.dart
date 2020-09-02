@@ -28,7 +28,7 @@ class CategoryTile extends StatelessWidget {
               category.data['icon'],
             ),
           ),
-          onTap: ()=> showDialog(context: context,builder: (context) => EditCategoryDialog()),
+          onTap: ()=> showDialog(context: context,builder: (context) => EditCategoryDialog(category: category,)),
         ),
         children: [
           _loadItemsOfCategory(),
