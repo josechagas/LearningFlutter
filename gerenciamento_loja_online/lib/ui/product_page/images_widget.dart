@@ -48,13 +48,13 @@ class ImagesWidgets extends FormField<List> {
                     color: Colors.white.withAlpha(50),
                   ),
                 ),
-                onTap: (){
-                  showModalBottomSheet(context: context, builder: (BuildContext context){
-                    return ImageSourceSheet(onImageSelected: (fileImage){
-                      state.didChange(state.value..add(fileImage));
-                      Navigator.of(context).pop();
-                    },);
+                onTap: () async {
+                  final file = await showModalBottomSheet(context: context, builder: (BuildContext context){
+                    return ImageSourceSheet();
                   });
+                  if(file != null) {
+                    state.didChange(state.value..add(file));
+                  }
                 },
               )),
             ),

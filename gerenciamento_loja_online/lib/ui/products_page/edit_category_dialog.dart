@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gerenciamento_loja_online/blocs/category_bloc.dart';
+import 'package:gerenciamento_loja_online/helpers/bloc_event.dart';
+import 'package:gerenciamento_loja_online/ui/product_page/image_source_sheet.dart';
 
 class EditCategoryDialog extends StatefulWidget {
   EditCategoryDialog({@required this.category, Key key}) : super(key: key);
@@ -38,24 +40,29 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
           ListTile(
             leading: GestureDetector(
               child: BlocBuilder<CategoryBloc, CategoryBlocState>(
+                buildWhen: (oldState, newState) {
+                  return oldState.iconUrl != newState.iconUrl || oldState.iconFile  != newState.iconFile;
+                },
                 cubit: _bloc,
                 builder: (context, state) {
                   Widget child;
-                  if (state.iconUrl != null) {
-                    child = Image.network(
-                      state.iconUrl,
-                      fit: BoxFit.cover,
-                      height: 40,
-                      width: 40,
-                    );
-                  } else if (state.iconFile != null) {
+                  if (state.iconFile != null) {
                     child = Image.file(
                       state.iconFile,
                       fit: BoxFit.cover,
                       height: 40,
                       width: 40,
                     );
-                  } else {
+                  }
+                  else if (state.iconUrl != null) {
+                    child = Image.network(
+                      state.iconUrl,
+                      fit: BoxFit.cover,
+                      height: 40,
+                      width: 40,
+                    );
+                  }
+                  else {
                     child = Icon(
                       Icons.image,
                       color: Colors.white,
@@ -73,12 +80,22 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                   );
                 },
               ),
+              onTap: () async {
+                final file = await showModalBottomSheet(context: context, builder: (BuildContext context){
+                  return ImageSourceSheet();
+                });
+
+                if(file != null) {
+                  _bloc.add(BlocEvent(CategoryBlocEvent.setImage,data: file));
+                }
+              },
             ),
             title: TextField(
               controller: _controller,
               decoration: InputDecoration(
                 hintText: 'Categoria',
               ),
+              onChanged: (newValue) => _bloc.add(BlocEvent(CategoryBlocEvent.setTitle,data: newValue)),
             ),
           ),
           Row(
@@ -97,12 +114,19 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                       onPressed:
                           state.mode == CategoryBlocMode.edit ? () {} : null,
                     );
-                  }),
-              FlatButton(
-                child: Text(
-                  'Salvar',
-                ),
-                onPressed: () {},
+                  },
+              ),
+              BlocBuilder<CategoryBloc, CategoryBlocState>(
+                cubit: _bloc,
+                //buildWhen: (oldState, newState) => oldState.isAValidCategory != newState.isAValidCategory,
+                builder: (context, state){
+                  return FlatButton(
+                    child: Text(
+                      'Salvar',
+                    ),
+                    onPressed: state.isAValidCategory ? () {} : null,
+                  );
+                },
               ),
             ],
           ),

@@ -5,9 +5,7 @@ import 'package:image_picker/image_picker.dart';
 
 class ImageSourceSheet extends StatelessWidget {
 
-  final Function(File) onImageSelected;
-
-  ImageSourceSheet({this.onImageSelected, Key key}):super(key: key);
+  ImageSourceSheet({Key key}):super(key: key);
   @override
   Widget build(BuildContext context) {
     return BottomSheet(
@@ -21,7 +19,7 @@ class ImageSourceSheet extends StatelessWidget {
               ),
               onPressed: () async {
                 PickedFile imageFile = await ImagePicker().getImage(source: ImageSource.camera,maxHeight: 500, maxWidth: 500);
-                imageSelected(imageFile);
+                imageSelected(context, imageFile);
               },
             ),
             FlatButton(
@@ -30,7 +28,7 @@ class ImageSourceSheet extends StatelessWidget {
               ),
               onPressed: () async {
                 PickedFile imageFile = await ImagePicker().getImage(source: ImageSource.gallery,maxHeight: 500, maxWidth: 500);
-                imageSelected(imageFile);
+                imageSelected(context,imageFile);
               },
             ),
           ],
@@ -40,10 +38,10 @@ class ImageSourceSheet extends StatelessWidget {
     );
   }
 
-  void imageSelected(PickedFile image) {
+  void imageSelected(BuildContext context, PickedFile image) {
     if(image != null){
       //File croppedImage = //await ImageCropper.cropImage(sourcePath: image.path, aspectRatio: CropAspectRatio(ratioX: 1,ratioY: 1));
-      onImageSelected(File(image.path));
+      Navigator.of(context).pop(File(image.path));
     }
   }
 }
