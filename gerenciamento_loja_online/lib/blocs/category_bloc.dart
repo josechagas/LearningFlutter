@@ -83,6 +83,18 @@ class CategoryBloc
         return newState;
       });
     }
+    else {
+      return await state.category.reference.update(dataToUpload)
+          .then((value) {
+        final newState = CategoryBlocState.fromState(state);
+        newState.updateStatus = CategoryUpdateStatus.successSaving;
+        return newState;
+      }).catchError((error) {
+        final newState = CategoryBlocState.fromState(state);
+        newState.updateStatus = CategoryUpdateStatus.failedSaving;
+        return newState;
+      });
+    }
     return state;
   }
 
@@ -98,7 +110,6 @@ class CategoryBloc
         newState.updateStatus = CategoryUpdateStatus.failedDeleting;
         return newState;
       });
-      //final updateStatus =
     }
     return state;
   }

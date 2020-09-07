@@ -77,7 +77,7 @@ class LoginBloc extends Bloc<BlocEvent<LoginBlocEvents>, LoginBlocState> {
         .then((UserCredential value) {
           print('then');
           return value?.user != null
-          ? null
+          ? LoginStatus.successfull
           : LoginStatus.errorInvalidCredentials;
     })
         .catchError((error) {
@@ -88,12 +88,12 @@ class LoginBloc extends Bloc<BlocEvent<LoginBlocEvents>, LoginBlocState> {
   }
 
   Future<bool> verifyIsAdmin(FirebaseUser user) async {
-    return await Firestore.instance
+    return await FirebaseFirestore.instance
         .collection('admins')
         .where('uid', isEqualTo: user.uid)
-        .getDocuments()
+        .get()
         .then((doc) {
-      return doc?.documents != null && doc?.documents?.isNotEmpty ?? false;
+      return doc?.docs != null && doc?.docs?.isNotEmpty ?? false;
     }).catchError((error) => false);
   }
 }

@@ -4,6 +4,7 @@ import 'package:gerenciamento_loja_online/router.dart';
 import 'package:gerenciamento_loja_online/ui/login_page/login_page.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
 }
