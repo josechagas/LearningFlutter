@@ -74,7 +74,7 @@ class LoginBloc extends Bloc<BlocEvent<LoginBlocEvents>, LoginBlocState> {
 
     return await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password)
-        .then((AuthResult value) {
+        .then((UserCredential value) {
           print('then');
           return value?.user != null
           ? null

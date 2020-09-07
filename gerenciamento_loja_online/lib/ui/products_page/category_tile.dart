@@ -11,11 +11,12 @@ class CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final data = category.data();
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: ExpansionTile(
         title: Text(
-          category.data['title'],
+          data['title'],
           style: TextStyle(
             color: Colors.grey[850],
             fontWeight: FontWeight.w500,
@@ -25,7 +26,7 @@ class CategoryTile extends StatelessWidget {
           child: CircleAvatar(
             backgroundColor: Colors.transparent,
             backgroundImage: NetworkImage(
-              category.data['icon'],
+              data['icon'],
             ),
           ),
           onTap: ()=> showDialog(context: context,builder: (context) => EditCategoryDialog(category: category,)),
@@ -64,19 +65,20 @@ class CategoryTile extends StatelessWidget {
   }
 
   List<Widget> _buildChildrenList(BuildContext context, QuerySnapshot data) {
-    return data.documents.map<Widget>((item){
+    return data.docs.map<Widget>((item){
+      final itemData = item.data();
       return ListTile(
         leading: CircleAvatar(
           backgroundColor: Colors.transparent,
           backgroundImage: NetworkImage(
-            item.data['images'][0],
+            itemData['images'][0],
           ),
         ),
         title: Text(
-          item.data['title'],
+          itemData['title'],
         ),
         trailing: Text(
-            'R\$${item.data['price']/100.0}'
+            'R\$${itemData['price']/100.0}'
         ),
         onTap: () => goToProductPage(context,product: item),
       );

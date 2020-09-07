@@ -52,8 +52,8 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
 
   Future<ClientsBlocState> _loadClients() async {
     var newState = ClientsBlocState.fromState(state);
-    return await Firestore.instance.collection('users').getDocuments().then((docs) {
-      newState.users = { for (var snapshot in docs.documents) snapshot.documentID : snapshot.data };
+    return await FirebaseFirestore.instance.collection('users').get().then((docs) {
+      newState.users = { for (var snapshot in docs.docs) snapshot.id : snapshot.data() };
       newState.loadStatus = ClientsLoadStatus.success;
       return newState;
     }).catchError((error){
@@ -65,13 +65,13 @@ class ClientsBloc extends Bloc<BlocEvent<ClientsBlocEvent>,ClientsBlocState>{
   ClientsBlocState _updateStateForChanges(List<DocumentChange> changes) {
     final newState = ClientsBlocState.fromState(state);
     changes.forEach((change) {
-      String uid = change.document.documentID;
+      String uid = change.doc.id;
       switch(change.type){
         case DocumentChangeType.added:
-          newState.users[uid] = change.document.data;
+          newState.users[uid] = change.doc.data();
           break;
         case DocumentChangeType.modified:
-          newState.users[uid].addAll(change.document.data);
+          newState.users[uid].addAll(change.doc.data());
           break;
         case DocumentChangeType.removed:
           newState.users.remove(uid);

@@ -97,6 +97,24 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               ),
               onChanged: (newValue) => _bloc.add(BlocEvent(CategoryBlocEvent.setTitle,data: newValue)),
             ),
+            trailing: BlocBuilder<CategoryBloc,CategoryBlocState>(
+              cubit: _bloc,
+              buildWhen: (oldState, newState)=> oldState.updateStatus != newState.updateStatus,
+              builder: (context, state){
+                final loadingStates = [CategoryUpdateStatus.saving, CategoryUpdateStatus.deleting];
+                return loadingStates.contains(state.updateStatus) ?
+                    SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 1,
+                        valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+                      ),
+                    )
+                    :
+                    SizedBox.shrink();
+              },
+            ),
           ),
           Row(
             children: [
@@ -112,19 +130,19 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                       ),
                       textColor: Colors.red,
                       onPressed:
-                          state.mode == CategoryBlocMode.edit ? () {} : null,
+                          state.mode == CategoryBlocMode.edit ? () => _bloc.add(BlocEvent(CategoryBlocEvent.delete)) : null,
                     );
                   },
               ),
               BlocBuilder<CategoryBloc, CategoryBlocState>(
                 cubit: _bloc,
-                //buildWhen: (oldState, newState) => oldState.isAValidCategory != newState.isAValidCategory,
+                buildWhen: (oldState, newState) => oldState.isAValidCategory != newState.isAValidCategory,
                 builder: (context, state){
                   return FlatButton(
                     child: Text(
                       'Salvar',
                     ),
-                    onPressed: state.isAValidCategory ? () {} : null,
+                    onPressed: state.isAValidCategory ? () => _bloc.add(BlocEvent(CategoryBlocEvent.save)) : null,
                   );
                 },
               ),

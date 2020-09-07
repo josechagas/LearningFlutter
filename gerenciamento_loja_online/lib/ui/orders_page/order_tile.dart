@@ -1,4 +1,3 @@
-import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +11,13 @@ class OrderTile extends StatelessWidget {
   final ClientsBlocState clientsBlocState;
 
   String get orderCode =>
-      order.documentID.substring(order.documentID.length - 7);
-  int get status => order.data['status'];
+      order.id.substring(order.id.length - 7);
+  int get status => order.data()['status'];
   String get stateString => states[status];
-  String get productsPrice => order.data['productsPrice'].toString();
-  String get totalPrice => order.data['totalPrice'].toString();
+  String get productsPrice => order.data()['productsPrice'].toString();
+  String get totalPrice => order.data()['totalPrice'].toString();
   Map<String, dynamic> get client =>
-      clientsBlocState.users[order.data['clientId']];
+      clientsBlocState.users[order.data()['clientId']];
   String get clientName => client['name'];
   String get clientAddress => client['address'];
 
@@ -71,7 +70,7 @@ class OrderTile extends StatelessWidget {
   }
 
   Widget _buildOrderItemsList(BuildContext context) {
-    final List products = order.data['products'];
+    final List products = order.data()['products'];
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: products.map((item) {
@@ -163,9 +162,9 @@ class OrderTile extends StatelessWidget {
   void deleteOrder() {
     Firestore.instance
         .collection('users')
-        .document(order.data['clientId'])
+        .doc(order.data()['clientId'])
         .collection('orders')
-        .document(order.documentID)
+        .doc(order.id)
         .delete();
     order.reference.delete();
   }

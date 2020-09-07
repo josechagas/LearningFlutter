@@ -48,12 +48,12 @@ class ProductBloc extends Bloc<BlocEvent<ProductBlocEvent>, ProductBlocState> {
             newState.product.documentID); //need reference to product.
         data['images'] =
             imagesUrls; //update the value to keep only the urls of uploaded images, removing references to local files.
-        await newState.product.reference.updateData(data);
+        await newState.product.reference.update(data);
       } else {
         final List images = data['images'];
-        DocumentReference newProdReference = await Firestore.instance
+        DocumentReference newProdReference = await FirebaseFirestore.instance
             .collection('products')
-            .document(state.categoryId)
+            .doc(state.categoryId)
             .collection('items')
             .add(data..remove('images'));
         final imagesUrls =
@@ -111,7 +111,7 @@ class ProductBlocState {
 
   DocumentSnapshot product;
   Map<String, dynamic> get prodMap =>
-      product != null ? Map.of(product.data) : {};
+      product != null ? Map.of(product.data()) : {};
 
   List<String> imagesList;
   List<String> sizesList;

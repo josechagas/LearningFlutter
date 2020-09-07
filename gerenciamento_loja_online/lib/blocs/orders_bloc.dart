@@ -110,8 +110,8 @@ class OrdersBlocState {
   void sortOrdersBy(SortCriteria criteria) {
     this.criteria = criteria;
     orders.sort((a,b){
-      int statusA = a.data['status'];
-      int statusB = b.data['status'];
+      int statusA = a.data()['status'];
+      int statusB = b.data()['status'];
       if(statusA < statusB){
         return criteria == SortCriteria.readyFirst ? 1 : -1;
       }
